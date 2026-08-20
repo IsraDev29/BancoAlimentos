@@ -48,15 +48,19 @@ Los scripts se aplican **en orden**:
 | [`Database/BancoAlimentos.sql`](Database/BancoAlimentos.sql) | Base completa: tablas, vistas, procedimientos, trigger y datos iniciales |
 | [`Database/02-fase1-usuarios.sql`](Database/02-fase1-usuarios.sql) | Autenticación con hash PBKDF2 y registro de usuarios |
 | [`Database/03-fase2-crud.sql`](Database/03-fase2-crud.sql) | CRUD de catálogos y empaquetado en el detalle de donación |
+| [`Database/04-fase3-reportes.sql`](Database/04-fase3-reportes.sql) | Reportes con filtro por fechas y unidades Libra, Gramo y Mililitro |
+| [`Database/05-fase4-empaque.sql`](Database/05-fase4-empaque.sql) | Desglose de empaque en dos niveles (paquetes × productos por paquete) |
 
 ```bash
 # mssql-tools18
 sqlcmd -S localhost,1433 -U sa -P 'TuPassword' -C -i Database/BancoAlimentos.sql
 sqlcmd -S localhost,1433 -U sa -P 'TuPassword' -C -i Database/02-fase1-usuarios.sql
 sqlcmd -S localhost,1433 -U sa -P 'TuPassword' -C -i Database/03-fase2-crud.sql
+sqlcmd -S localhost,1433 -U sa -P 'TuPassword' -C -i Database/04-fase3-reportes.sql
+sqlcmd -S localhost,1433 -U sa -P 'TuPassword' -C -i Database/05-fase4-empaque.sql
 ```
 
-Las migraciones 02 y 03 son **obligatorias**: la aplicación llama a
+Las migraciones 02 a 05 son **obligatorias**: la aplicación llama a
 `sp_ObtenerCredencial`, `sp_GuardarDonante` y compañía, que se crean ahí. Sin
 ellas el login y los módulos de catálogo fallan. Ambas son idempotentes, se
 pueden correr varias veces sin efecto adicional.
@@ -132,7 +136,7 @@ BancoAlimentos.Avalonia/
 | **Beneficiarios** | CRUD completo (comedores, ONG, albergues…) | — |
 | **Donantes** | CRUD completo con los dos tipos: Empresa y Particular | — |
 | **Inventario** | Existencias con filtro, y CRUD del catálogo de alimentos | RF-02, RF-08 |
-| **Reportes** | Pendiente de fase 2; las vistas SQL ya existen | RF-04, RF-05 |
+| **Reportes** | Detalle filtrable, gráficas de barras y exportación a CSV | RF-04, RF-05 |
 | **Distribución** | Entrega de lotes; el stock se descuenta vía trigger | RF-03 |
 | **Configuración** | Sesión, atajos de teclado y paleta; cerrar sesión | — |
 
@@ -158,19 +162,51 @@ borrarse: eliminarlo rompería la trazabilidad exigida por RF-04 y RF-05. La
 aplicación avisa cuál de las dos cosas pasó. La casilla «Ver inactivos» permite
 recuperarlos.
 
-### Empaquetado en las donaciones
+### Captura de un lote
 
-Cada línea de una donación puede ser a granel o venir envasada. Si se marca
-«Viene empaquetado o envasado» hay que indicar cuántos envases son, el peso o
-volumen de cada uno y en qué unidad; queda en `dbo.DetalleDonacion`
-(`EsEmpaquetado`, `CantidadEnvases`, `PesoPorEnvase`, `IdUnidadPeso`) y se
-muestra como «24 × 0.4 Kg» en las tablas. La unidad de medida del alimento la
-define su ficha en el catálogo (Inventario ▸ Catálogo de alimentos).
+La tarjeta «Agregar producto» tiene dos modos **excluyentes**. Al marcar
+«Producto empaquetado» el bloque de producto individual se deshabilita, porque
+en ese caso la cantidad sale del desglose por paquete.
+
+| Modo | Campos | Productos del lote |
+|---|---|---|
+| Individual | Cantidad de productos | ese mismo número |
+| Empaquetado | Cantidad de paquetes, cantidad de producto por paquete | paquetes × productos por paquete |
+
+Ambos modos comparten **peso de un producto** y su **unidad de medida**, y se
+guardan en `dbo.DetalleDonacion` (`EsEmpaquetado`, `CantidadEnvases` = paquetes,
+`ProductosPorPaquete`, `CantidadProductos`, `PesoPorEnvase` = peso de un
+producto, `IdUnidadPeso`). En las tablas se muestra como «3 paq × 8 de 250 g» o
+«20 de 500 g».
+
+El total que entra al inventario se calcula solo y siempre en la unidad del
+alimento, convirtiendo dentro de la misma familia de unidades
+(`Models/ConversionUnidades.cs`): 24 productos de 250 g de un alimento medido en
+Kg son 6 Kg. Si el alimento se mide en piezas (Unid, Caja) el total es el número
+de productos, sin convertir el peso.
+
+Unidades disponibles: Kilogramo, Gramo, **Libra**, Litro, Mililitro, Unidad y Caja.
+
+### Reportes
+
+Dos reportes con el mismo esqueleto: filtro por rango de fechas (con atajos
+«Último mes» y «Último año»), tres indicadores de resumen, dos gráficas de
+barras y la tabla de detalle.
+
+- **RF-04 Donaciones**: qué aportó cada donante, con gráficas por donante y por
+  categoría de alimento.
+- **RF-05 Distribución**: qué recibió cada beneficiario, con gráficas por
+  beneficiario y por producto.
+
+«Exportar CSV» genera el archivo en la carpeta personal del usuario, en UTF-8
+con BOM para que Excel respete los acentos. Las gráficas se dibujan con barras
+proporcionales calculadas en el ViewModel, sin dependencias externas: Avalonia
+no permite enlazar un ancho proporcional desde datos.
 
 ### Pendiente
 
-- Pantallas de reportes y exportación (RF-04, RF-05); las vistas SQL ya existen.
 - Control de acceso por rol: `Operador` y `Administrador` ven los mismos módulos.
+- Exportación a PDF (hoy sólo CSV).
 
 ## 8. Limitaciones conocidas
 

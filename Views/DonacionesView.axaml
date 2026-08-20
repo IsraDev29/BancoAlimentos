@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:BancoAlimentos.Avalonia.ViewModels"
+             xmlns:models="using:BancoAlimentos.Avalonia.Models"
              x:Class="BancoAlimentos.Avalonia.Views.DonacionesView"
              x:DataType="vm:DonacionesViewModel">
 
@@ -42,51 +43,54 @@
                                   HorizontalAlignment="Stretch"
                                   PlaceholderText="Seleccione un producto"/>
 
-                        <Grid ColumnDefinitions="*,10,Auto" Margin="0,4,0,0">
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Classes="campo" Text="CANTIDAD" Margin="0"/>
-                                <NumericUpDown Value="{Binding CantidadParaAgregar}"
-                                               Minimum="0" FormatString="0.##" Margin="0,6,0,0"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="2" VerticalAlignment="Bottom">
-                                <TextBlock Classes="campo" Text="UNIDAD" Margin="0"/>
-                                <Border Background="{DynamicResource AppCanvasSoft}" CornerRadius="6"
-                                        Padding="10,9" Margin="0,6,0,0" MinWidth="96">
-                                    <TextBlock Text="{Binding UnidadDelProducto}" FontSize="12.5"
-                                               Foreground="{DynamicResource TextBody}"
-                                               VerticalAlignment="Center"/>
-                                </Border>
-                            </StackPanel>
-                        </Grid>
-                        <TextBlock Classes="apagado" TextWrapping="Wrap"
-                                   Text="La unidad la define el alimento en su catálogo (Inventario ▸ Catálogo de alimentos)."/>
-
                         <TextBlock Classes="campo" Text="FECHA DE VENCIMIENTO"/>
                         <DatePicker SelectedDate="{Binding FechaVencimientoParaAgregar}"
                                     HorizontalAlignment="Stretch"/>
 
                         <Border Classes="separador"/>
 
-                        <CheckBox Content="Viene empaquetado o envasado"
-                                  IsChecked="{Binding EsEmpaquetado}" FontSize="12.5"/>
+                        <!-- Producto individual: se deshabilita al marcar empaquetado -->
+                        <StackPanel Spacing="6" IsEnabled="{Binding EsIndividual}">
+                            <TextBlock Classes="campo" Text="CANTIDAD DE PRODUCTOS" Margin="0"/>
+                            <NumericUpDown Value="{Binding CantidadProductos}"
+                                           Minimum="0" FormatString="0.##"/>
+                        </StackPanel>
 
-                        <StackPanel Spacing="6" IsVisible="{Binding EsEmpaquetado}">
-                            <TextBlock Classes="campo" Text="CANTIDAD DE ENVASES"/>
-                            <NumericUpDown Value="{Binding CantidadEnvases}"
+                        <Border Classes="separador"/>
+
+                        <CheckBox Content="Producto empaquetado" FontSize="12.5"
+                                  IsChecked="{Binding EsEmpaquetado}"/>
+
+                        <!-- Desglose por paquete: sólo activo en modo empaquetado -->
+                        <StackPanel Spacing="6" IsEnabled="{Binding EsEmpaquetado}" Margin="0,2,0,0">
+                            <TextBlock Classes="campo" Text="CANTIDAD DE PAQUETES"/>
+                            <NumericUpDown Value="{Binding CantidadPaquetes}"
                                            Minimum="0" FormatString="0.##"/>
 
-                            <TextBlock Classes="campo" Text="PESO O VOLUMEN DE CADA ENVASE"/>
-                            <NumericUpDown Value="{Binding PesoPorEnvase}"
-                                           Minimum="0" FormatString="0.###"/>
-
-                            <TextBlock Classes="campo" Text="UNIDAD DEL PESO POR ENVASE"/>
-                            <ComboBox ItemsSource="{Binding Unidades}"
-                                      SelectedItem="{Binding UnidadPeso}"
-                                      HorizontalAlignment="Stretch"/>
-
-                            <TextBlock Classes="apagado" TextWrapping="Wrap"
-                                       Text="Ej. 24 latas de 0.4 Kg cada una. La cantidad de arriba sigue siendo el total del lote."/>
+                            <TextBlock Classes="campo" Text="CANTIDAD DE PRODUCTO POR PAQUETE"/>
+                            <NumericUpDown Value="{Binding ProductosPorPaquete}"
+                                           Minimum="0" FormatString="0.##"/>
                         </StackPanel>
+
+                        <Border Classes="separador"/>
+
+                        <TextBlock Classes="campo" Text="PESO DE UN PRODUCTO"/>
+                        <NumericUpDown Value="{Binding PesoPorProducto}"
+                                       Minimum="0" FormatString="0.###"/>
+
+                        <TextBlock Classes="campo" Text="UNIDAD DE MEDIDA DEL PESO"/>
+                        <ComboBox ItemsSource="{Binding Unidades}"
+                                  SelectedItem="{Binding UnidadPeso}"
+                                  HorizontalAlignment="Stretch"/>
+
+                        <Grid ColumnDefinitions="Auto,10,*" Margin="0,6,0,0">
+                            <TextBlock Grid.Column="0" Classes="campo" Text="UNIDAD DEL ALIMENTO"
+                                       Margin="0" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="{Binding UnidadDelProducto}" FontSize="12.5"
+                                       Foreground="{DynamicResource TextBody}" VerticalAlignment="Center"/>
+                        </Grid>
+                        <TextBlock Classes="apagado" TextWrapping="Wrap"
+                                   Text="El total del lote se calcula solo y entra al inventario en la unidad del alimento."/>
 
                         <Button Classes="secundario" Content="Agregar a la donación"
                                 Command="{Binding AgregarDetalleCommand}"

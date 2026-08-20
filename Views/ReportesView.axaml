@@ -1,49 +1,152 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:BancoAlimentos.Avalonia.ViewModels"
+             xmlns:models="using:BancoAlimentos.Avalonia.Models"
              x:Class="BancoAlimentos.Avalonia.Views.ReportesView"
-             x:DataType="vm:MainViewModel">
+             x:DataType="vm:ReportesViewModel">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Margin="24" Spacing="16">
+    <Grid Margin="24" RowDefinitions="Auto,Auto,Auto,*,Auto">
 
-            <Border Classes="tarjeta">
-                <StackPanel Spacing="8">
-                    <TextBlock Classes="subtitulo" Text="Reporte de donaciones (RF-04)"/>
-                    <TextBlock Classes="apagado" TextWrapping="Wrap" MaxWidth="760"
-                               Text="Detalle de qué donó cada donante, en qué fecha, en qué cantidad y con qué vencimiento. Es el respaldo que se entrega a los donantes."/>
-                    <TextBlock Classes="apagado" Margin="0,4,0,0"
-                               Text="Origen de datos: vista dbo.vw_ReporteDonaciones"/>
-                    <Button Classes="primario" Content="Generar reporte" IsEnabled="False"
-                            HorizontalAlignment="Left" Margin="0,8,0,0"
-                            ToolTip.Tip="Disponible en la siguiente entrega"/>
-                </StackPanel>
-            </Border>
-
-            <Border Classes="tarjeta">
-                <StackPanel Spacing="8">
-                    <TextBlock Classes="subtitulo" Text="Reporte de distribución (RF-05)"/>
-                    <TextBlock Classes="apagado" TextWrapping="Wrap" MaxWidth="760"
-                               Text="Detalle de qué se entregó a cada beneficiario, cuándo y bajo la responsabilidad de qué usuario. Es el respaldo para entes fiscalizadores."/>
-                    <TextBlock Classes="apagado" Margin="0,4,0,0"
-                               Text="Origen de datos: vista dbo.vw_ReporteDistribucion"/>
-                    <Button Classes="primario" Content="Generar reporte" IsEnabled="False"
-                            HorizontalAlignment="Left" Margin="0,8,0,0"
-                            ToolTip.Tip="Disponible en la siguiente entrega"/>
-                </StackPanel>
-            </Border>
-
-            <Border Background="{DynamicResource AccentNaranjaSoft}" CornerRadius="10"
-                    BorderBrush="{DynamicResource AccentNaranja}" BorderThickness="1"
-                    Padding="18,14">
-                <StackPanel Spacing="4">
-                    <TextBlock Classes="seccion" Text="PENDIENTE"
-                               Foreground="{DynamicResource StateWarning}"/>
-                    <TextBlock TextWrapping="Wrap" FontSize="12.5"
-                               Foreground="{DynamicResource TextBody}"
-                               Text="Las dos vistas SQL ya existen y devuelven datos. Falta la pantalla que las muestre y la exportación a PDF o Excel; queda para la fase 2 junto con el CRUD."/>
-                </StackPanel>
-            </Border>
+        <!-- Selector de reporte -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="0,0,0,14">
+            <Button Classes="segmento" Classes.activo="{Binding MostrandoDonaciones}"
+                    Command="{Binding VerDonacionesCommand}"
+                    Content="Donaciones (RF-04)" MinWidth="185" HorizontalContentAlignment="Center"/>
+            <Button Classes="segmento" Classes.activo="{Binding MostrandoDistribucion}"
+                    Command="{Binding VerDistribucionCommand}"
+                    Content="Distribución (RF-05)" MinWidth="185" HorizontalContentAlignment="Center"/>
         </StackPanel>
-    </ScrollViewer>
+
+        <!-- Filtro -->
+        <Border Grid.Row="1" Classes="tarjeta" Padding="16,14" Margin="0,0,0,14">
+            <WrapPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,18,0" VerticalAlignment="Center">
+                    <TextBlock Classes="campo" Text="DESDE" Margin="0" VerticalAlignment="Center"/>
+                    <DatePicker SelectedDate="{Binding Desde}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,18,0" VerticalAlignment="Center">
+                    <TextBlock Classes="campo" Text="HASTA" Margin="0" VerticalAlignment="Center"/>
+                    <DatePicker SelectedDate="{Binding Hasta}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Button Classes="secundario" Content="Último mes" Command="{Binding UltimoMesCommand}"/>
+                    <Button Classes="secundario" Content="Último año" Command="{Binding UltimoAnioCommand}"/>
+                    <Button Classes="secundario" Content="Exportar CSV" Command="{Binding ExportarCsvCommand}"/>
+                    <Button Classes="primario" Content="Generar reporte" Command="{Binding GenerarCommand}"/>
+                </StackPanel>
+            </WrapPanel>
+        </Border>
+
+        <!-- Resumen y gráficas -->
+        <Grid Grid.Row="2" ColumnDefinitions="190,14,*,14,*" Margin="0,0,0,14">
+
+            <Border Grid.Column="0" Classes="tarjeta" Padding="18,14">
+                <StackPanel Spacing="12">
+                    <StackPanel>
+                        <TextBlock Classes="metricaEtiqueta" Text="REGISTROS"/>
+                        <TextBlock Classes="metrica" Text="{Binding TotalRegistros}" Margin="0,2,0,0"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Classes="metricaEtiqueta" Text="{Binding EtiquetaTotal}"
+                                   Foreground="{DynamicResource StateSuccess}"/>
+                        <TextBlock Classes="metrica" Text="{Binding TotalCantidad}" Margin="0,2,0,0"
+                                   Foreground="{DynamicResource StateSuccess}"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Classes="metricaEtiqueta" Text="{Binding EtiquetaParticipantes}"
+                                   Foreground="{DynamicResource StateWarning}"/>
+                        <TextBlock Classes="metrica" Text="{Binding TotalParticipantes}" Margin="0,2,0,0"
+                                   Foreground="{DynamicResource StateWarning}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2" Classes="tarjeta" Padding="18,14">
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="subtitulo" Text="{Binding TituloGraficaPrincipal}"/>
+                    <ItemsControl ItemsSource="{Binding GraficaPrincipal}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="models:BarraReporte">
+                                <Grid ColumnDefinitions="120,*,58" Margin="0,3">
+                                    <TextBlock Grid.Column="0" Text="{Binding Etiqueta}" FontSize="12"
+                                               TextTrimming="CharacterEllipsis" VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextBody}" Margin="0,0,8,0"/>
+                                    <Border Grid.Column="1" Height="18" CornerRadius="4"
+                                            HorizontalAlignment="Left" Width="{Binding Ancho}"
+                                            Background="{DynamicResource BrandAccent}"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding ValorTexto}" FontSize="12" TextAlignment="Right"
+                                               FontWeight="SemiBold" VerticalAlignment="Center" Margin="8,0,0,0"
+                                               Foreground="{DynamicResource TextPrimary}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Classes="apagado" Text="Sin datos en el período."
+                               IsVisible="{Binding !HayDatos}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="4" Classes="tarjeta" Padding="18,14">
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="subtitulo" Text="{Binding TituloGraficaSecundaria}"/>
+                    <ItemsControl ItemsSource="{Binding GraficaSecundaria}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="models:BarraReporte">
+                                <Grid ColumnDefinitions="120,*,58" Margin="0,3">
+                                    <TextBlock Grid.Column="0" Text="{Binding Etiqueta}" FontSize="12"
+                                               TextTrimming="CharacterEllipsis" VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextBody}" Margin="0,0,8,0"/>
+                                    <Border Grid.Column="1" Height="18" CornerRadius="4"
+                                            HorizontalAlignment="Left" Width="{Binding Ancho}"
+                                            Background="{DynamicResource StateWarning}"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding ValorTexto}" FontSize="12" TextAlignment="Right"
+                                               FontWeight="SemiBold" VerticalAlignment="Center" Margin="8,0,0,0"
+                                               Foreground="{DynamicResource TextPrimary}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Classes="apagado" Text="Sin datos en el período."
+                               IsVisible="{Binding !HayDatos}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Detalle -->
+        <Border Grid.Row="3" Classes="tarjeta" Padding="0">
+            <Panel>
+                <DataGrid ItemsSource="{Binding Donaciones}" IsVisible="{Binding MostrandoDonaciones}"
+                          AutoGenerateColumns="False" IsReadOnly="True" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="FECHA" Binding="{Binding FechaRecepcion, StringFormat=dd/MM/yyyy}" Width="110"/>
+                        <DataGridTextColumn Header="DONANTE" Binding="{Binding Donante}" Width="1.6*" MinWidth="130"/>
+                        <DataGridTextColumn Header="TIPO" Binding="{Binding TipoDonante}" Width="105"/>
+                        <DataGridTextColumn Header="PRODUCTO" Binding="{Binding Producto}" Width="1.4*" MinWidth="120"/>
+                        <DataGridTextColumn Header="CATEGORÍA" Binding="{Binding Categoria}" Width="1.2*" MinWidth="115"/>
+                        <DataGridTextColumn Header="CANTIDAD" Binding="{Binding Cantidad}" Width="115"/>
+                        <DataGridTextColumn Header="UNIDAD" Binding="{Binding Unidad}" Width="100"/>
+                        <DataGridTextColumn Header="EMPAQUE" Binding="{Binding Empaque}" Width="130"/>
+                        <DataGridTextColumn Header="VENCE" Binding="{Binding FechaVencimiento, StringFormat=dd/MM/yyyy}" Width="110"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <DataGrid ItemsSource="{Binding Distribucion}" IsVisible="{Binding MostrandoDistribucion}"
+                          AutoGenerateColumns="False" IsReadOnly="True" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="FECHA" Binding="{Binding FechaEntrega, StringFormat=dd/MM/yyyy}" Width="110"/>
+                        <DataGridTextColumn Header="BENEFICIARIO" Binding="{Binding Beneficiario}" Width="1.8*" MinWidth="140"/>
+                        <DataGridTextColumn Header="TIPO" Binding="{Binding TipoBeneficiario}" Width="1.2*" MinWidth="115"/>
+                        <DataGridTextColumn Header="PRODUCTO" Binding="{Binding Producto}" Width="1.4*" MinWidth="120"/>
+                        <DataGridTextColumn Header="CATEGORÍA" Binding="{Binding Categoria}" Width="1.2*" MinWidth="115"/>
+                        <DataGridTextColumn Header="CANTIDAD" Binding="{Binding CantidadEntregada}" Width="115"/>
+                        <DataGridTextColumn Header="UNIDAD" Binding="{Binding Unidad}" Width="100"/>
+                        <DataGridTextColumn Header="ENTREGADO POR" Binding="{Binding EntregadoPor}" Width="1.4*" MinWidth="140"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Panel>
+        </Border>
+
+        <TextBlock Grid.Row="4" Classes="mensaje" Text="{Binding Mensaje}" Margin="0,12,0,0"
+                   IsVisible="{Binding Mensaje, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+    </Grid>
 </UserControl>

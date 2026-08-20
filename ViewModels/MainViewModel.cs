@@ -47,6 +47,7 @@ public class MainViewModel : ViewModelBase
     public AlertasViewModel AlertasVm { get; }
     public DonantesViewModel DonantesVm { get; }
     public BeneficiariosViewModel BeneficiariosVm { get; }
+    public ReportesViewModel ReportesVm { get; }
 
     private Seccion _seccionActual = Seccion.Inicio;
     public Seccion SeccionActual
@@ -118,6 +119,7 @@ public class MainViewModel : ViewModelBase
         AlertasVm = new AlertasViewModel();
         DonantesVm = new DonantesViewModel();
         BeneficiariosVm = new BeneficiariosViewModel();
+        ReportesVm = new ReportesViewModel();
 
         SeleccionarSeccionCommand = new RelayCommand(p =>
         {
@@ -143,6 +145,7 @@ public class MainViewModel : ViewModelBase
     {
         InventarioVm.CargarCommand.Execute(null);
         AlertasVm.CargarCommand.Execute(null);
+        ReportesVm.GenerarCommand.Execute(null);
     }
 
     /// <summary>F5: recarga los datos del módulo visible.</summary>
@@ -159,6 +162,7 @@ public class MainViewModel : ViewModelBase
             case Seccion.Donantes: DonantesVm.CargarCommand.Execute(null); break;
             case Seccion.Inventario: InventarioVm.CargarCommand.Execute(null); break;
             case Seccion.Distribucion: DistribucionVm.CargarCommand.Execute(null); break;
+            case Seccion.Reportes: ReportesVm.GenerarCommand.Execute(null); break;
         }
     }
 
@@ -171,5 +175,6 @@ public class MainViewModel : ViewModelBase
         AlertasVm.Mensaje = string.Empty;
         DonantesVm.Mensaje = string.Empty;
         BeneficiariosVm.Mensaje = string.Empty;
+        ReportesVm.Mensaje = string.Empty;
     }
 }

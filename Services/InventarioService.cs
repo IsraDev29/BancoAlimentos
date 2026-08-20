@@ -60,8 +60,10 @@ public class InventarioService
             Donante = reader.GetString(reader.GetOrdinal("Donante")),
             Estado = reader.GetString(reader.GetOrdinal("Estado")),
             EsEmpaquetado = reader.GetBoolean(reader.GetOrdinal("EsEmpaquetado")),
-            CantidadEnvases = Decimal(reader, "CantidadEnvases"),
-            PesoPorEnvase = Decimal(reader, "PesoPorEnvase"),
+            CantidadPaquetes = Decimal(reader, "CantidadEnvases"),
+            ProductosPorPaquete = Decimal(reader, "ProductosPorPaquete"),
+            CantidadProductos = Decimal(reader, "CantidadProductos"),
+            PesoPorProducto = Decimal(reader, "PesoPorEnvase"),
             UnidadPeso = Texto(reader, "UnidadPeso"),
         };
     }

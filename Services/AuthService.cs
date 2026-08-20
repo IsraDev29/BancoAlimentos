@@ -25,25 +25,37 @@ public class AuthService
         cmd.Parameters.Add("@NombreUsuario", SqlDbType.VarChar, 50).Value = nombreUsuario;
 
         await conn.OpenAsync();
-        using var reader = await cmd.ExecuteReaderAsync();
 
-        if (!await reader.ReadAsync())
-            return null;
-
-        if (!reader.GetBoolean(reader.GetOrdinal("Activo")))
-            return null;
-
-        var hashGuardado = reader.GetString(reader.GetOrdinal("Contrasena"));
-        if (!PasswordHasher.Verificar(contrasena, hashGuardado))
-            return null;
-
-        return new Usuario
+        SqlDataReader reader;
+        try
         {
-            IdUsuario = reader.GetInt32(reader.GetOrdinal("IdUsuario")),
-            NombreCompleto = reader.GetString(reader.GetOrdinal("NombreCompleto")),
-            NombreUsuario = reader.GetString(reader.GetOrdinal("NombreUsuario")),
-            NombreRol = reader.GetString(reader.GetOrdinal("NombreRol")),
-        };
+            reader = await cmd.ExecuteReaderAsync();
+        }
+        catch (SqlException ex) when (ErroresSql.Traducir(ex) is { } traducido)
+        {
+            throw traducido;
+        }
+
+        using (reader)
+        {
+            if (!await reader.ReadAsync())
+                return null;
+
+            if (!reader.GetBoolean(reader.GetOrdinal("Activo")))
+                return null;
+
+            var hashGuardado = reader.GetString(reader.GetOrdinal("Contrasena"));
+            if (!PasswordHasher.Verificar(contrasena, hashGuardado))
+                return null;
+
+            return new Usuario
+            {
+                IdUsuario = reader.GetInt32(reader.GetOrdinal("IdUsuario")),
+                NombreCompleto = reader.GetString(reader.GetOrdinal("NombreCompleto")),
+                NombreUsuario = reader.GetString(reader.GetOrdinal("NombreUsuario")),
+                NombreRol = reader.GetString(reader.GetOrdinal("NombreRol")),
+            };
+        }
     }
 
     /// <summary>

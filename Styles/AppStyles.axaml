@@ -365,4 +365,38 @@
         <Setter Property="Foreground" Value="White"/>
     </Style>
 
+    <!-- Fichas del constructor de variantes -->
+
+    <Style Selector="Border.ficha">
+        <Setter Property="Background" Value="{DynamicResource StateSuccessSoft}"/>
+        <Setter Property="CornerRadius" Value="13"/>
+        <Setter Property="Padding" Value="10,4"/>
+    </Style>
+    <Style Selector="Border.ficha > StackPanel > TextBlock">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource StateSuccess}"/>
+    </Style>
+
+    <Style Selector="Border.ficha-alt">
+        <Setter Property="Background" Value="{DynamicResource StateWarningSoft}"/>
+    </Style>
+    <Style Selector="Border.ficha-alt > StackPanel > TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource StateWarning}"/>
+    </Style>
+
+    <Style Selector="Button.ficha">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="2,0"/>
+        <Setter Property="MinHeight" Value="16"/>
+        <Setter Property="MinWidth" Value="16"/>
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+    </Style>
+    <Style Selector="Button.ficha:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource StateDanger}"/>
+    </Style>
+
 </Styles>

@@ -50,29 +50,61 @@ public class DonacionesViewModel : ViewModelBase
         ? "—"
         : $"{ProductoParaAgregar.UnidadNombre} ({ProductoParaAgregar.UnidadAbreviatura})";
 
-    // ---------- Empaquetado de la línea que se está capturando ----------
+    // ---------- Captura del lote ----------
 
     public ObservableCollection<UnidadMedida> Unidades { get; } = new();
 
+    /// <summary>
+    /// Alterna entre los dos modos de captura. Al marcarlo se deshabilita el
+    /// bloque de producto individual, porque los datos salen del desglose
+    /// por paquete.
+    /// </summary>
     private bool _esEmpaquetado;
     public bool EsEmpaquetado
     {
         get => _esEmpaquetado;
-        set => SetField(ref _esEmpaquetado, value);
+        set
+        {
+            if (SetField(ref _esEmpaquetado, value))
+                OnPropertyChanged(nameof(EsIndividual));
+        }
     }
 
-    private decimal _cantidadEnvases = 1;
-    public decimal CantidadEnvases
+    /// <summary>Habilita el bloque de producto individual: es el modo contrario.</summary>
+    public bool EsIndividual => !EsEmpaquetado;
+
+    // --- Producto individual ---
+
+    private decimal _cantidadProductos = 1;
+    public decimal CantidadProductos
     {
-        get => _cantidadEnvases;
-        set => SetField(ref _cantidadEnvases, value);
+        get => _cantidadProductos;
+        set => SetField(ref _cantidadProductos, value);
     }
 
-    private decimal _pesoPorEnvase = 1;
-    public decimal PesoPorEnvase
+    // --- Producto empaquetado ---
+
+    private decimal _cantidadPaquetes = 1;
+    public decimal CantidadPaquetes
     {
-        get => _pesoPorEnvase;
-        set => SetField(ref _pesoPorEnvase, value);
+        get => _cantidadPaquetes;
+        set => SetField(ref _cantidadPaquetes, value);
+    }
+
+    private decimal _productosPorPaquete = 1;
+    public decimal ProductosPorPaquete
+    {
+        get => _productosPorPaquete;
+        set => SetField(ref _productosPorPaquete, value);
+    }
+
+    // --- Común a los dos modos ---
+
+    private decimal _pesoPorProducto = 1;
+    public decimal PesoPorProducto
+    {
+        get => _pesoPorProducto;
+        set => SetField(ref _pesoPorProducto, value);
     }
 
     private UnidadMedida? _unidadPeso;
@@ -80,13 +112,6 @@ public class DonacionesViewModel : ViewModelBase
     {
         get => _unidadPeso;
         set => SetField(ref _unidadPeso, value);
-    }
-
-    private decimal _cantidadParaAgregar = 1;
-    public decimal CantidadParaAgregar
-    {
-        get => _cantidadParaAgregar;
-        set => SetField(ref _cantidadParaAgregar, value);
     }
 
     // DatePicker.SelectedDate es DateTimeOffset?. Con DateTime el binding falla en ambos
@@ -148,11 +173,12 @@ public class DonacionesViewModel : ViewModelBase
     public void LimpiarCapturaRapida()
     {
         ProductoParaAgregar = null;
-        CantidadParaAgregar = 1;
         FechaVencimientoParaAgregar = new DateTimeOffset(DateTime.Today.AddMonths(1));
         EsEmpaquetado = false;
-        CantidadEnvases = 1;
-        PesoPorEnvase = 1;
+        CantidadProductos = 1;
+        CantidadPaquetes = 1;
+        ProductosPorPaquete = 1;
+        PesoPorProducto = 1;
         Mensaje = string.Empty;
     }
 
@@ -182,11 +208,6 @@ public class DonacionesViewModel : ViewModelBase
             Mensaje = "Seleccione un producto.";
             return;
         }
-        if (CantidadParaAgregar <= 0)
-        {
-            Mensaje = "La cantidad debe ser mayor a cero.";
-            return;
-        }
         if (FechaVencimientoParaAgregar is null)
         {
             Mensaje = "Indique la fecha de vencimiento del producto.";
@@ -200,38 +221,72 @@ public class DonacionesViewModel : ViewModelBase
             return;
         }
 
+        if (PesoPorProducto <= 0)
+        {
+            Mensaje = "Indique el peso o volumen de un producto (mayor a cero).";
+            return;
+        }
+        if (UnidadPeso is null)
+        {
+            Mensaje = "Seleccione la unidad de medida del peso.";
+            return;
+        }
+
+        // Cuántos productos individuales trae el lote, según el modo de captura.
+        decimal totalProductos;
+
         if (EsEmpaquetado)
         {
-            if (CantidadEnvases <= 0)
+            if (CantidadPaquetes <= 0)
             {
-                Mensaje = "Indique cuántos envases son (mayor a cero).";
+                Mensaje = "Indique la cantidad de paquetes (mayor a cero).";
                 return;
             }
-            if (PesoPorEnvase <= 0)
+            if (ProductosPorPaquete <= 0)
             {
-                Mensaje = "Indique el peso o volumen de cada envase (mayor a cero).";
+                Mensaje = "Indique cuántos productos trae cada paquete (mayor a cero).";
                 return;
             }
-            if (UnidadPeso is null)
-            {
-                Mensaje = "Seleccione la unidad del peso por envase.";
-                return;
-            }
+
+            totalProductos = CantidadPaquetes * ProductosPorPaquete;
         }
+        else
+        {
+            if (CantidadProductos <= 0)
+            {
+                Mensaje = "Indique la cantidad de productos (mayor a cero).";
+                return;
+            }
+
+            totalProductos = CantidadProductos;
+        }
+
+        // El inventario se lleva en la unidad del alimento: si el peso está en una
+        // unidad de la misma familia se convierte, si no, el total es el conteo.
+        var totalLote = ConversionUnidades.CalcularTotal(
+            totalProductos, PesoPorProducto,
+            UnidadPeso.Abreviatura, ProductoParaAgregar.UnidadAbreviatura);
 
         DetalleDonacion.Add(new DetalleDonacionInput
         {
             ProductoSeleccionado = ProductoParaAgregar,
-            Cantidad = CantidadParaAgregar,
+            Cantidad = totalLote,
             FechaVencimiento = fechaVencimiento,
             EsEmpaquetado = EsEmpaquetado,
-            CantidadEnvases = EsEmpaquetado ? CantidadEnvases : null,
-            PesoPorEnvase = EsEmpaquetado ? PesoPorEnvase : null,
-            UnidadPeso = EsEmpaquetado ? UnidadPeso : null
+            CantidadProductos = totalProductos,
+            PesoPorProducto = PesoPorProducto,
+            UnidadPeso = UnidadPeso,
+            CantidadPaquetes = EsEmpaquetado ? CantidadPaquetes : null,
+            ProductosPorPaquete = EsEmpaquetado ? ProductosPorPaquete : null
         });
 
-        // reset de la línea rápida de captura
-        CantidadParaAgregar = 1;
+        Mensaje = $"Agregado: {totalProductos:0.##} producto(s), total {totalLote:0.##} " +
+                  $"{ProductoParaAgregar.UnidadAbreviatura}.";
+
+        // reset de la captura
+        CantidadProductos = 1;
+        CantidadPaquetes = 1;
+        ProductosPorPaquete = 1;
         EsEmpaquetado = false;
     }
 

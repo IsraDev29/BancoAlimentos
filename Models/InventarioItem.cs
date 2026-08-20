@@ -27,13 +27,28 @@ public class InventarioItem
     // ---------- Empaquetado del lote ----------
 
     public bool EsEmpaquetado { get; set; }
-    public decimal? CantidadEnvases { get; set; }
-    public decimal? PesoPorEnvase { get; set; }
+    public decimal? CantidadPaquetes { get; set; }
+    public decimal? ProductosPorPaquete { get; set; }
+    public decimal? CantidadProductos { get; set; }
+    public decimal? PesoPorProducto { get; set; }
     public string? UnidadPeso { get; set; }
 
-    /// <summary>Columna «EMPAQUE» de las tablas: "10 × 2.5 Kg" o "Granel".</summary>
-    public string DescripcionEmpaque =>
-        EsEmpaquetado && CantidadEnvases is > 0 && PesoPorEnvase is > 0
-            ? $"{CantidadEnvases:0.##} × {PesoPorEnvase:0.###} {UnidadPeso}"
-            : "Granel";
+    /// <summary>
+    /// Columna «EMPAQUE» de las tablas: "2 paq × 12 de 0.4 Kg" si viene
+    /// empaquetado, o "24 de 0.4 Kg" si se capturó como producto individual.
+    /// </summary>
+    public string DescripcionEmpaque
+    {
+        get
+        {
+            var peso = PesoPorProducto is > 0
+                ? $" de {PesoPorProducto:0.###} {UnidadPeso}"
+                : string.Empty;
+
+            if (EsEmpaquetado && CantidadPaquetes is > 0 && ProductosPorPaquete is > 0)
+                return $"{CantidadPaquetes:0.##} paq × {ProductosPorPaquete:0.##}{peso}";
+
+            return CantidadProductos is > 0 ? $"{CantidadProductos:0.##}{peso}" : "—";
+        }
+    }
 }

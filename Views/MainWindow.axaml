@@ -127,7 +127,7 @@
                     <views:InventarioView DataContext="{Binding InventarioVm}"/>
                 </ContentControl>
                 <ContentControl IsVisible="{Binding EsReportes}">
-                    <views:ReportesView/>
+                    <views:ReportesView DataContext="{Binding ReportesVm}"/>
                 </ContentControl>
                 <ContentControl IsVisible="{Binding EsDistribucion}">
                     <views:DistribucionView DataContext="{Binding DistribucionVm}"/>

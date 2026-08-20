@@ -162,9 +162,16 @@ public class CatalogoService
         parametros?.Invoke(cmd);
 
         await conn.OpenAsync();
-        using var reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
-            lista.Add(mapear(reader));
+        try
+        {
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+                lista.Add(mapear(reader));
+        }
+        catch (SqlException ex) when (ErroresSql.Traducir(ex) is { } traducido)
+        {
+            throw traducido;
+        }
 
         return lista;
     }
@@ -184,6 +191,10 @@ public class CatalogoService
         try
         {
             return Convert.ToInt32(await cmd.ExecuteScalarAsync());
+        }
+        catch (SqlException ex) when (ErroresSql.Traducir(ex) is not null)
+        {
+            throw ErroresSql.Traducir(ex)!;
         }
         catch (SqlException ex) when (ex.Number >= 50020 && ex.Number < 51000)
         {
