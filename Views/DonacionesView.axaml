@@ -1,0 +1,94 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:BancoAlimentos.Avalonia.ViewModels"
+             x:Class="BancoAlimentos.Avalonia.Views.DonacionesView"
+             x:DataType="vm:DonacionesViewModel">
+
+    <Grid Margin="24" ColumnDefinitions="320,24,*">
+
+        <!-- Columna izquierda: captura de la donación.
+             Va dentro de un ScrollViewer porque en ventanas bajas el formulario
+             no cabe y antes los botones del final quedaban inalcanzables. -->
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="16" Margin="0,0,4,0">
+
+                <Border Classes="tarjeta">
+                    <StackPanel Spacing="6">
+                        <TextBlock Classes="subtitulo" Text="Datos de la donación"/>
+
+                        <TextBlock Classes="campo" Text="DONANTE"/>
+                        <ComboBox ItemsSource="{Binding Donantes}"
+                                  SelectedItem="{Binding DonanteSeleccionado}"
+                                  HorizontalAlignment="Stretch"
+                                  PlaceholderText="Seleccione un donante"/>
+
+                        <TextBlock Classes="campo" Text="OBSERVACIONES"/>
+                        <TextBox Text="{Binding Observaciones}" AcceptsReturn="True"
+                                 Height="70" TextWrapping="Wrap"
+                                 Watermark="Opcional"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="tarjeta">
+                    <StackPanel Spacing="6">
+                        <TextBlock Classes="subtitulo" Text="Agregar producto"/>
+                        <TextBlock Classes="apagado" Text="Cada línea es un lote con su propia fecha de vencimiento."
+                                   TextWrapping="Wrap" Margin="0,0,0,4"/>
+
+                        <TextBlock Classes="campo" Text="PRODUCTO"/>
+                        <ComboBox ItemsSource="{Binding Productos}"
+                                  SelectedItem="{Binding ProductoParaAgregar}"
+                                  HorizontalAlignment="Stretch"
+                                  PlaceholderText="Seleccione un producto"/>
+
+                        <TextBlock Classes="campo" Text="CANTIDAD"/>
+                        <NumericUpDown Value="{Binding CantidadParaAgregar}"
+                                       Minimum="0" FormatString="0.##"/>
+
+                        <TextBlock Classes="campo" Text="FECHA DE VENCIMIENTO"/>
+                        <DatePicker SelectedDate="{Binding FechaVencimientoParaAgregar}"
+                                    HorizontalAlignment="Stretch"/>
+
+                        <Button Classes="secundario" Content="Agregar a la donación"
+                                Command="{Binding AgregarDetalleCommand}"
+                                HorizontalAlignment="Stretch" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <Button Classes="primario" Content="Guardar donación completa"
+                        Command="{Binding GuardarDonacionCommand}"
+                        HorizontalAlignment="Stretch" Height="42"/>
+
+                <TextBlock Classes="mensaje" Text="{Binding Mensaje}"
+                           IsVisible="{Binding Mensaje, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Columna derecha: detalle acumulado -->
+        <Border Grid.Column="2" Classes="tarjeta" Padding="18,16">
+            <Grid RowDefinitions="Auto,*">
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,14">
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Classes="subtitulo" Text="Detalle a registrar"/>
+                        <TextBlock Classes="apagado" Text="Revise las líneas antes de guardar."/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Classes="secundario" Content="Quitar línea"
+                            Command="{Binding QuitarDetalleSeleccionadoCommand}"
+                            VerticalAlignment="Center"/>
+                </Grid>
+
+                <DataGrid Grid.Row="1" ItemsSource="{Binding DetalleDonacion}"
+                          SelectedItem="{Binding DetalleSeleccionado}"
+                          AutoGenerateColumns="False" IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="PRODUCTO" Binding="{Binding ProductoNombre}" Width="2*" MinWidth="110"/>
+                        <DataGridTextColumn Header="CANT." Binding="{Binding Cantidad}" Width="95"/>
+                        <DataGridTextColumn Header="UNID." Binding="{Binding UnidadAbreviatura}" Width="88"/>
+                        <DataGridTextColumn Header="VENCE" Binding="{Binding FechaVencimiento, StringFormat=dd/MM/yyyy}" Width="98"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

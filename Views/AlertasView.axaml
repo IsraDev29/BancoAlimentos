@@ -1,0 +1,79 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:BancoAlimentos.Avalonia.ViewModels"
+             xmlns:models="using:BancoAlimentos.Avalonia.Models"
+             x:Class="BancoAlimentos.Avalonia.Views.AlertasView"
+             x:DataType="vm:AlertasViewModel">
+
+    <Grid Margin="24" RowDefinitions="Auto,*,Auto">
+
+        <!-- Tarjetas de resumen -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,16,*,16,*" Margin="0,0,0,16">
+
+            <Border Grid.Column="0" Classes="tarjeta" Padding="18,14">
+                <StackPanel>
+                    <TextBlock Classes="metricaEtiqueta" Text="TOTAL EN ALERTA"/>
+                    <TextBlock Classes="metrica" Text="{Binding TotalAlertas}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2" Classes="tarjeta" Padding="18,14">
+                <StackPanel>
+                    <TextBlock Classes="metricaEtiqueta" Text="POR VENCER"
+                               Foreground="{DynamicResource StateWarning}"/>
+                    <TextBlock Classes="metrica" Text="{Binding TotalPorVencer}" Margin="0,4,0,0"
+                               Foreground="{DynamicResource StateWarning}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="4" Classes="tarjeta" Padding="18,14">
+                <StackPanel>
+                    <TextBlock Classes="metricaEtiqueta" Text="VENCIDOS"
+                               Foreground="{DynamicResource StateDanger}"/>
+                    <TextBlock Classes="metrica" Text="{Binding TotalVencidos}" Margin="0,4,0,0"
+                               Foreground="{DynamicResource StateDanger}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="1" Classes="tarjeta" Padding="0">
+            <Grid RowDefinitions="Auto,*">
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="18,14,18,12">
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Classes="subtitulo" Text="Lotes que requieren atención"/>
+                        <TextBlock Classes="apagado" Text="Ordenados por fecha de vencimiento más próxima."/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Classes="secundario" Content="Actualizar"
+                            Command="{Binding CargarCommand}" VerticalAlignment="Center"/>
+                </Grid>
+
+                <DataGrid Grid.Row="1" ItemsSource="{Binding Alertas}"
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="PRODUCTO" Binding="{Binding Producto}" Width="1.6*"/>
+                        <DataGridTextColumn Header="CATEGORÍA" Binding="{Binding Categoria}" Width="1.2*"/>
+                        <DataGridTextColumn Header="CANTIDAD" Binding="{Binding CantidadDisponible}" Width="125"/>
+                        <DataGridTextColumn Header="UNIDAD" Binding="{Binding Unidad}" Width="105"/>
+                        <DataGridTextColumn Header="VENCE" Binding="{Binding FechaVencimiento, StringFormat=dd/MM/yyyy}" Width="110"/>
+                        <DataGridTextColumn Header="DONANTE" Binding="{Binding Donante}" Width="1.4*"/>
+                        <DataGridTemplateColumn Header="ESTADO" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="models:InventarioItem">
+                                    <Border Classes="distintivo"
+                                            Classes.aviso="{Binding EstadoEsPorVencer}"
+                                            Classes.peligro="{Binding EstadoEsVencido}">
+                                        <TextBlock Text="{Binding Estado}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+
+        <TextBlock Grid.Row="2" Classes="mensaje" Text="{Binding Mensaje}" Margin="0,12,0,0"
+                   IsVisible="{Binding Mensaje, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+    </Grid>
+</UserControl>

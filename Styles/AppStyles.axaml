@@ -1,0 +1,261 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ============================================================
+         Estilos compartidos de la aplicación.
+         Las clases (Classes="...") se aplican desde las vistas.
+         ============================================================ -->
+
+    <!-- Tipografía -->
+
+    <Style Selector="TextBlock.titulo">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrandPrimary}"/>
+    </Style>
+
+    <Style Selector="TextBlock.subtitulo">
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+    </Style>
+
+    <!-- Etiqueta de campo de formulario -->
+    <Style Selector="TextBlock.campo">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+        <Setter Property="Margin" Value="0,4,0,0"/>
+    </Style>
+
+    <Style Selector="TextBlock.apagado">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+    </Style>
+
+    <!-- Tarjetas / paneles -->
+
+    <Style Selector="Border.tarjeta">
+        <Setter Property="Background" Value="{DynamicResource AppSurface}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource AppBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="18"/>
+        <Setter Property="BoxShadow" Value="0 1 3 0 #14000000"/>
+    </Style>
+
+    <Style Selector="Border.separador">
+        <Setter Property="Background" Value="{DynamicResource AppBorder}"/>
+        <Setter Property="Height" Value="1"/>
+        <Setter Property="Margin" Value="0,10,0,10"/>
+    </Style>
+
+    <!-- Botones -->
+
+    <Style Selector="Button">
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="16,9"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="MinHeight" Value="36"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+
+    <!-- Acción principal -->
+    <Style Selector="Button.primario">
+        <Setter Property="Background" Value="{DynamicResource BrandAccent}"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Button.primario:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource BrandAccentHover}"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Button.primario:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource BrandAccentPressed}"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!-- Acción secundaria -->
+    <Style Selector="Button.secundario">
+        <Setter Property="Background" Value="{DynamicResource AppSurface}"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrandPrimary}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource AppBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    <Style Selector="Button.secundario:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource BrandLight}"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrandPrimary}"/>
+    </Style>
+
+    <Style Selector="Button:disabled">
+        <Setter Property="Opacity" Value="0.5"/>
+    </Style>
+
+    <!-- Entradas -->
+
+    <Style Selector="TextBox">
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="10,8"/>
+        <Setter Property="MinHeight" Value="36"/>
+    </Style>
+
+    <Style Selector="ComboBox">
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="10,7"/>
+        <Setter Property="MinHeight" Value="36"/>
+    </Style>
+
+    <Style Selector="NumericUpDown">
+        <Setter Property="MinHeight" Value="36"/>
+    </Style>
+
+    <!-- DataGrid -->
+
+    <Style Selector="DataGrid">
+        <Setter Property="Background" Value="{DynamicResource AppSurface}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource AppBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource AppBorder}"/>
+        <Setter Property="RowHeight" Value="38"/>
+        <Setter Property="ClipToBounds" Value="True"/>
+    </Style>
+
+    <Style Selector="DataGridColumnHeader">
+        <Setter Property="Background" Value="{DynamicResource AppCanvas}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="MinHeight" Value="38"/>
+        <Setter Property="Padding" Value="9,0,9,0"/>
+        <Setter Property="SeparatorBrush" Value="{DynamicResource AppBorder}"/>
+    </Style>
+
+    <Style Selector="DataGridCell">
+        <Setter Property="Padding" Value="12,0,12,0"/>
+        <Setter Property="FontSize" Value="13"/>
+    </Style>
+
+    <!-- Pestañas -->
+
+    <Style Selector="TabItem">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="18,10"/>
+        <Setter Property="MinHeight" Value="44"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+    </Style>
+
+    <Style Selector="TabItem:selected">
+        <Setter Property="Foreground" Value="{DynamicResource BrandAccent}"/>
+    </Style>
+
+    <!-- Distintivos de estado -->
+
+    <Style Selector="Border.distintivo">
+        <Setter Property="CornerRadius" Value="11"/>
+        <Setter Property="Padding" Value="10,3"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <Style Selector="Border.distintivo > TextBlock">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <Style Selector="Border.distintivo.ok">
+        <Setter Property="Background" Value="{DynamicResource StateSuccessSoft}"/>
+    </Style>
+    <Style Selector="Border.distintivo.ok > TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource StateSuccess}"/>
+    </Style>
+
+    <Style Selector="Border.distintivo.aviso">
+        <Setter Property="Background" Value="{DynamicResource StateWarningSoft}"/>
+    </Style>
+    <Style Selector="Border.distintivo.aviso > TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource StateWarning}"/>
+    </Style>
+
+    <Style Selector="Border.distintivo.peligro">
+        <Setter Property="Background" Value="{DynamicResource StateDangerSoft}"/>
+    </Style>
+    <Style Selector="Border.distintivo.peligro > TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource StateDanger}"/>
+    </Style>
+
+    <!-- Navegación lateral -->
+
+    <Style Selector="Button.nav">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextOnBrand}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="14,0"/>
+        <Setter Property="MinHeight" Value="42"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+    </Style>
+    <Style Selector="Button.nav:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#1F3A5C"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Button.nav.activo">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+    <Style Selector="Button.nav.activo /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource BrandAccent}"/>
+    </Style>
+    <Style Selector="Button.nav.activo:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource BrandAccentHover}"/>
+    </Style>
+
+    <!-- Cabecera de página -->
+
+    <Style Selector="TextBlock.pagina">
+        <Setter Property="FontSize" Value="21"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+    </Style>
+
+    <Style Selector="TextBlock.paginaSub">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+        <Setter Property="Margin" Value="0,3,0,0"/>
+    </Style>
+
+    <!-- Indicador numérico grande de las tarjetas de resumen -->
+
+    <Style Selector="TextBlock.metrica">
+        <Setter Property="FontSize" Value="26"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+    </Style>
+
+    <Style Selector="TextBlock.metricaEtiqueta">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+    </Style>
+
+    <!-- Mensajes de estado del formulario -->
+
+    <Style Selector="TextBlock.mensaje">
+        <Setter Property="FontSize" Value="12.5"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrandAccent}"/>
+    </Style>
+
+    <Style Selector="TextBlock.error">
+        <Setter Property="FontSize" Value="12.5"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Foreground" Value="{DynamicResource StateDanger}"/>
+    </Style>
+
+</Styles>

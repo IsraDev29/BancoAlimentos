@@ -1,0 +1,61 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:BancoAlimentos.Avalonia.ViewModels"
+        x:Class="BancoAlimentos.Avalonia.Views.LoginWindow"
+        x:DataType="vm:LoginViewModel"
+        Width="460" Height="580"
+        MinWidth="400" MinHeight="420"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource AppSurface}"
+        Title="Banco de Alimentos Solidarios - Iniciar sesión">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <Border Grid.Row="0" Background="{DynamicResource BrandPrimary}" Padding="32,30">
+            <StackPanel>
+                <TextBlock Text="Banco de Alimentos" Foreground="White"
+                           FontSize="22" FontWeight="Bold"/>
+                <TextBlock Text="Solidarios" Foreground="{DynamicResource TextOnBrand}"
+                           FontSize="22" FontWeight="Bold"/>
+                <TextBlock Text="Sistema de Gestión de Donaciones"
+                           Foreground="{DynamicResource TextOnBrand}" FontSize="12.5"
+                           Margin="0,10,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ScrollViewer para que el formulario siga siendo usable si la ventana
+             se reduce por debajo de la altura del contenido. -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="32,28" Spacing="6">
+
+                <TextBlock Classes="subtitulo" Text="Iniciar sesión" Margin="0,0,0,6"/>
+
+                <TextBlock Classes="campo" Text="USUARIO"/>
+                <TextBox Text="{Binding NombreUsuario}" Watermark="Ingrese su usuario"/>
+
+                <TextBlock Classes="campo" Text="CONTRASEÑA"/>
+                <TextBox Text="{Binding Contrasena}" PasswordChar="●"
+                         Watermark="Ingrese su contraseña"/>
+
+                <Border Background="{DynamicResource StateDangerSoft}" CornerRadius="6"
+                        Padding="12,9" Margin="0,10,0,0"
+                        IsVisible="{Binding MensajeError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                    <TextBlock Classes="error" Text="{Binding MensajeError}"/>
+                </Border>
+
+                <Button Classes="primario" Content="Iniciar sesión"
+                        Command="{Binding IniciarSesionCommand}"
+                        HorizontalAlignment="Stretch" Height="44" Margin="0,16,0,0"/>
+
+                <Border Background="{DynamicResource AppCanvas}" CornerRadius="6"
+                        Padding="12,9" Margin="0,14,0,0">
+                    <StackPanel Spacing="2">
+                        <TextBlock Classes="metricaEtiqueta" Text="USUARIO DE PRUEBA"/>
+                        <TextBlock Classes="apagado" Text="admin / admin123"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
