@@ -1,0 +1,96 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:BancoAlimentos.Avalonia.ViewModels"
+             x:Class="BancoAlimentos.Avalonia.Views.ConfiguracionView"
+             x:DataType="vm:MainViewModel">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="24" Spacing="16" MaxWidth="820" HorizontalAlignment="Left">
+
+            <Border Classes="tarjeta">
+                <StackPanel Spacing="10">
+                    <TextBlock Classes="subtitulo" Text="Sesión actual"/>
+                    <Grid ColumnDefinitions="180,*" RowDefinitions="Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Classes="campo" Text="USUARIO"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding NombreUsuario}"
+                                   Foreground="{DynamicResource TextBody}" FontSize="13"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Classes="campo" Text="ROL"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,8,0,0" Text="{Binding RolUsuario}"
+                                   Foreground="{DynamicResource TextBody}" FontSize="13"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Classes="campo" Text="CONTRASEÑA"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" FontSize="13"
+                                   Foreground="{DynamicResource TextBody}"
+                                   Text="Almacenada con hash PBKDF2-HMAC-SHA256 y salt por usuario"/>
+                    </Grid>
+                    <Button Classes="peligro" Content="Cerrar sesión"
+                            Command="{Binding CerrarSesionCommand}"
+                            HorizontalAlignment="Left" Margin="0,6,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="tarjeta">
+                <StackPanel Spacing="10">
+                    <TextBlock Classes="subtitulo" Text="Atajos de teclado"/>
+                    <Grid ColumnDefinitions="180,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Classes="campo" Text="TAB"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" FontSize="13" Foreground="{DynamicResource TextBody}"
+                                   Text="Avanza al siguiente campo; Mayús+Tab retrocede"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Classes="campo" Text="ENTER"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,8,0,0" FontSize="13" Foreground="{DynamicResource TextBody}"
+                                   Text="Confirma el formulario visible (iniciar sesión, agregar producto)"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Classes="campo" Text="ESC"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" FontSize="13" Foreground="{DynamicResource TextBody}"
+                                   Text="Limpia el formulario y descarta los mensajes de estado"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Classes="campo" Text="F5"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Margin="0,8,0,0" FontSize="13" Foreground="{DynamicResource TextBody}"
+                                   Text="Recarga los datos del módulo actual"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Classes="campo" Text="CTRL + 1…8"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Margin="0,8,0,0" FontSize="13" Foreground="{DynamicResource TextBody}"
+                                   Text="Salta directo a cada módulo de la barra lateral"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="tarjeta">
+                <StackPanel Spacing="10">
+                    <TextBlock Classes="subtitulo" Text="Paleta institucional"/>
+                    <TextBlock Classes="apagado" Text="Distribución 60-30-10"/>
+                    <Grid ColumnDefinitions="*,*,*,*,*" Margin="0,6,0,0">
+                        <StackPanel Grid.Column="0" Spacing="6">
+                            <Border Height="44" CornerRadius="8" Background="{DynamicResource AppCanvas}"
+                                    BorderBrush="{DynamicResource AppBorder}" BorderThickness="1"/>
+                            <TextBlock Classes="apagado" Text="Crema 60%"/>
+                            <TextBlock Classes="apagado" Text="#f1ddbe" FontSize="10"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="6" Margin="10,0,0,0">
+                            <Border Height="44" CornerRadius="8" Background="{DynamicResource BrandPrimary}"/>
+                            <TextBlock Classes="apagado" Text="Café 30%"/>
+                            <TextBlock Classes="apagado" Text="#724635" FontSize="10"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Spacing="6" Margin="10,0,0,0">
+                            <Border Height="44" CornerRadius="8" Background="{DynamicResource StateDanger}"/>
+                            <TextBlock Classes="apagado" Text="Rojo 5%"/>
+                            <TextBlock Classes="apagado" Text="#9e2c23" FontSize="10"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="3" Spacing="6" Margin="10,0,0,0">
+                            <Border Height="44" CornerRadius="8" Background="{DynamicResource AccentNaranja}"/>
+                            <TextBlock Classes="apagado" Text="Naranja 3%"/>
+                            <TextBlock Classes="apagado" Text="#ee7b21" FontSize="10"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="4" Spacing="6" Margin="10,0,0,0">
+                            <Border Height="44" CornerRadius="8" Background="#7E9446"/>
+                            <TextBlock Classes="apagado" Text="Verde 2%"/>
+                            <TextBlock Classes="apagado" Text="#7e9446" FontSize="10"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

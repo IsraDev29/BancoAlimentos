@@ -59,6 +59,22 @@ public class InventarioService
             FechaRecepcion = reader.GetDateTime(reader.GetOrdinal("FechaRecepcion")),
             Donante = reader.GetString(reader.GetOrdinal("Donante")),
             Estado = reader.GetString(reader.GetOrdinal("Estado")),
+            EsEmpaquetado = reader.GetBoolean(reader.GetOrdinal("EsEmpaquetado")),
+            CantidadEnvases = Decimal(reader, "CantidadEnvases"),
+            PesoPorEnvase = Decimal(reader, "PesoPorEnvase"),
+            UnidadPeso = Texto(reader, "UnidadPeso"),
         };
+    }
+
+    private static decimal? Decimal(SqlDataReader r, string columna)
+    {
+        var i = r.GetOrdinal(columna);
+        return r.IsDBNull(i) ? null : r.GetDecimal(i);
+    }
+
+    private static string? Texto(SqlDataReader r, string columna)
+    {
+        var i = r.GetOrdinal(columna);
+        return r.IsDBNull(i) ? null : r.GetString(i);
     }
 }

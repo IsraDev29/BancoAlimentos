@@ -41,13 +41,25 @@ almacenados reciben el detalle como JSON y lo expanden con `OPENJSON`.
 
 ## 3. Crear la base de datos
 
-El script completo (tablas, vistas, procedimientos, trigger y datos
-iniciales) está en [`Database/BancoAlimentos.sql`](Database/BancoAlimentos.sql):
+Los scripts se aplican **en orden**:
+
+| Archivo | Contenido |
+|---|---|
+| [`Database/BancoAlimentos.sql`](Database/BancoAlimentos.sql) | Base completa: tablas, vistas, procedimientos, trigger y datos iniciales |
+| [`Database/02-fase1-usuarios.sql`](Database/02-fase1-usuarios.sql) | Autenticación con hash PBKDF2 y registro de usuarios |
+| [`Database/03-fase2-crud.sql`](Database/03-fase2-crud.sql) | CRUD de catálogos y empaquetado en el detalle de donación |
 
 ```bash
 # mssql-tools18
 sqlcmd -S localhost,1433 -U sa -P 'TuPassword' -C -i Database/BancoAlimentos.sql
+sqlcmd -S localhost,1433 -U sa -P 'TuPassword' -C -i Database/02-fase1-usuarios.sql
+sqlcmd -S localhost,1433 -U sa -P 'TuPassword' -C -i Database/03-fase2-crud.sql
 ```
+
+Las migraciones 02 y 03 son **obligatorias**: la aplicación llama a
+`sp_ObtenerCredencial`, `sp_GuardarDonante` y compañía, que se crean ahí. Sin
+ellas el login y los módulos de catálogo fallan. Ambas son idempotentes, se
+pueden correr varias veces sin efecto adicional.
 
 También puedes ejecutarlo desde DataGrip, Rider, Azure Data Studio o DBeaver.
 Crea la base de datos **`BancoAlimentos`**.
@@ -103,7 +115,8 @@ BancoAlimentos.Avalonia/
 │                       Distribución, Alertas)
 ├── Styles/           → AppStyles.axaml: estilos compartidos por clases
 │                       (Classes="tarjeta", "primario", "distintivo", ...)
-├── Database/         → Script completo de la base de datos
+├── Controls/         → LogoBanco: el logo dibujado con vectores
+├── Database/         → Scripts de la base de datos (aplicar en orden)
 ├── App.axaml(.cs)    → Arranque de la aplicación
 ├── Program.cs        → Punto de entrada
 └── appsettings.json  → Cadena de conexión a SQL Server
@@ -111,38 +124,67 @@ BancoAlimentos.Avalonia/
 
 ## 7. Módulos funcionales incluidos
 
-| Módulo | Descripción | Requisito de la guía cubierto |
+| Módulo | Estado | Requisito |
 |---|---|---|
-| **Login** | Autenticación contra `dbo.sp_ValidarLogin` | Seguridad (RNF-06, parcial) |
-| **Donaciones** | Registro de donaciones con múltiples productos (llama `sp_RegistrarDonacion`) | RF-01 |
-| **Inventario** | Consulta con filtro por texto y por estado (Vigente/Por vencer/Vencido) | RF-02, RF-08 |
-| **Distribución** | Entrega de lotes a comedores/ONGs (llama `sp_RegistrarDistribucion`, descuenta stock automáticamente vía trigger) | RF-03 |
-| **Alertas** | Lista de productos por vencer o vencidos (`sp_ObtenerAlertasStockCritico`) | RF-06 |
+| **Acceso** | Login y registro de usuarios; contraseña con hash PBKDF2 | RNF-06 |
+| **Inicio** | Bienvenida, indicadores y alertas de vencimiento | RF-06 |
+| **Donaciones** | Registro con múltiples lotes, unidad de medida y empaquetado | RF-01 |
+| **Beneficiarios** | CRUD completo (comedores, ONG, albergues…) | — |
+| **Donantes** | CRUD completo con los dos tipos: Empresa y Particular | — |
+| **Inventario** | Existencias con filtro, y CRUD del catálogo de alimentos | RF-02, RF-08 |
+| **Reportes** | Pendiente de fase 2; las vistas SQL ya existen | RF-04, RF-05 |
+| **Distribución** | Entrega de lotes; el stock se descuenta vía trigger | RF-03 |
+| **Configuración** | Sesión, atajos de teclado y paleta; cerrar sesión | — |
 
-Los reportes para donantes y entes fiscalizadores (RF-04, RF-05) existen
-únicamente como vistas SQL (`vw_ReporteDonaciones`, `vw_ReporteDistribucion`):
-**todavía no hay pantalla ni exportación en la aplicación**.
+### Atajos de teclado
+
+| Tecla | Acción |
+|---|---|
+| `Tab` / `Mayús+Tab` | Recorre los campos del formulario |
+| `Enter` | Confirma el formulario visible (login, registro, agregar producto) |
+| `Esc` | Limpia el formulario y descarta los mensajes de estado |
+| `F5` | Recarga los datos del módulo actual |
+| `Ctrl` + `1`…`8` | Salta a cada módulo de la barra lateral |
+| `Insert` | Abre el formulario de alta en los módulos con CRUD |
+| `F2` | Edita el registro seleccionado |
+
+### Borrado de catálogos
+
+Los procedimientos `sp_EliminarDonante`, `sp_EliminarBeneficiario` y
+`sp_EliminarProducto` **borran de verdad sólo si nadie referencia el registro**.
+Si el donante ya donó, el beneficiario ya recibió una entrega o el alimento ya
+apareció en una donación, el registro se **desactiva** (`Activo = 0`) en lugar de
+borrarse: eliminarlo rompería la trazabilidad exigida por RF-04 y RF-05. La
+aplicación avisa cuál de las dos cosas pasó. La casilla «Ver inactivos» permite
+recuperarlos.
+
+### Empaquetado en las donaciones
+
+Cada línea de una donación puede ser a granel o venir envasada. Si se marca
+«Viene empaquetado o envasado» hay que indicar cuántos envases son, el peso o
+volumen de cada uno y en qué unidad; queda en `dbo.DetalleDonacion`
+(`EsEmpaquetado`, `CantidadEnvases`, `PesoPorEnvase`, `IdUnidadPeso`) y se
+muestra como «24 × 0.4 Kg» en las tablas. La unidad de medida del alimento la
+define su ficha en el catálogo (Inventario ▸ Catálogo de alimentos).
+
+### Pendiente
+
+- Pantallas de reportes y exportación (RF-04, RF-05); las vistas SQL ya existen.
+- Control de acceso por rol: `Operador` y `Administrador` ven los mismos módulos.
 
 ## 8. Limitaciones conocidas
 
 Pendientes identificados en la revisión del código; ninguno impide ejecutar el
 prototipo, pero conviene documentarlos en la entrega:
 
-1. **Contraseñas en texto plano.** `dbo.Usuario.Contrasena` guarda la clave sin
-   cifrar y `sp_ValidarLogin` la compara con `=`. Además la colación de la base
-   es `SQL_Latin1_General_CP1_CI_AS`, así que la comparación **no distingue
-   mayúsculas**: `ADMIN123` también entra. Para cumplir RNF-06 de verdad hay que
-   guardar un hash con salt (PBKDF2/bcrypt) y verificarlo en la aplicación, no
-   en SQL.
-2. **Credenciales de `sa` en `appsettings.json`.** Ver la advertencia de la
+1. **Credenciales de `sa` en `appsettings.json`.** Ver la advertencia de la
    sección 4.
-3. **Sin módulo de reportes** (RF-04 / RF-05): las vistas están listas, falta la
+2. **Sin módulo de reportes** (RF-04 / RF-05): las vistas están listas, falta la
    interfaz.
-4. **Sin control de acceso por rol.** El rol se lee al iniciar sesión y se
-   muestra en el encabezado, pero `Operador` y `Administrador` ven exactamente
-   las mismas pestañas.
-5. **Sin cierre de sesión** ni forma de volver al login sin reiniciar la app.
-6. **La aplicación requiere ICU instalado.** `InvariantGlobalization` debe seguir
+3. **Sin control de acceso por rol.** El rol se lee al iniciar sesión y se
+   muestra en la barra lateral, pero `Operador` y `Administrador` ven los mismos
+   módulos.
+4. **La aplicación requiere ICU instalado.** `InvariantGlobalization` debe seguir
    en `false` en el `.csproj`: `Microsoft.Data.SqlClient` no soporta el modo
    invariante y falla al abrir la conexión con
    `Globalization Invariant Mode is not supported`. En Ubuntu basta con el

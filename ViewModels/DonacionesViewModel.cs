@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using BancoAlimentos.Avalonia.Common;
@@ -37,7 +38,48 @@ public class DonacionesViewModel : ViewModelBase
     public Producto? ProductoParaAgregar
     {
         get => _productoParaAgregar;
-        set => SetField(ref _productoParaAgregar, value);
+        set
+        {
+            if (SetField(ref _productoParaAgregar, value))
+                OnPropertyChanged(nameof(UnidadDelProducto));
+        }
+    }
+
+    /// <summary>Unidad de medida que trae el alimento desde el catálogo.</summary>
+    public string UnidadDelProducto => ProductoParaAgregar is null
+        ? "—"
+        : $"{ProductoParaAgregar.UnidadNombre} ({ProductoParaAgregar.UnidadAbreviatura})";
+
+    // ---------- Empaquetado de la línea que se está capturando ----------
+
+    public ObservableCollection<UnidadMedida> Unidades { get; } = new();
+
+    private bool _esEmpaquetado;
+    public bool EsEmpaquetado
+    {
+        get => _esEmpaquetado;
+        set => SetField(ref _esEmpaquetado, value);
+    }
+
+    private decimal _cantidadEnvases = 1;
+    public decimal CantidadEnvases
+    {
+        get => _cantidadEnvases;
+        set => SetField(ref _cantidadEnvases, value);
+    }
+
+    private decimal _pesoPorEnvase = 1;
+    public decimal PesoPorEnvase
+    {
+        get => _pesoPorEnvase;
+        set => SetField(ref _pesoPorEnvase, value);
+    }
+
+    private UnidadMedida? _unidadPeso;
+    public UnidadMedida? UnidadPeso
+    {
+        get => _unidadPeso;
+        set => SetField(ref _unidadPeso, value);
     }
 
     private decimal _cantidadParaAgregar = 1;
@@ -102,6 +144,18 @@ public class DonacionesViewModel : ViewModelBase
     /// <summary>Se dispara al registrar una donación, para que inventario y alertas se refresquen.</summary>
     public event Action? DonacionRegistrada;
 
+    /// <summary>Esc: descarta la línea que se está capturando, sin tocar el detalle ya agregado.</summary>
+    public void LimpiarCapturaRapida()
+    {
+        ProductoParaAgregar = null;
+        CantidadParaAgregar = 1;
+        FechaVencimientoParaAgregar = new DateTimeOffset(DateTime.Today.AddMonths(1));
+        EsEmpaquetado = false;
+        CantidadEnvases = 1;
+        PesoPorEnvase = 1;
+        Mensaje = string.Empty;
+    }
+
     private async Task CargarCatalogosAsync()
     {
         Donantes.Clear();
@@ -111,6 +165,12 @@ public class DonacionesViewModel : ViewModelBase
         Productos.Clear();
         foreach (var p in await _catalogoService.ObtenerProductosAsync())
             Productos.Add(p);
+
+        if (Unidades.Count == 0)
+            foreach (var u in await _catalogoService.ObtenerUnidadesAsync())
+                Unidades.Add(u);
+
+        UnidadPeso ??= Unidades.FirstOrDefault();
     }
 
     private void AgregarDetalle()
@@ -140,15 +200,39 @@ public class DonacionesViewModel : ViewModelBase
             return;
         }
 
+        if (EsEmpaquetado)
+        {
+            if (CantidadEnvases <= 0)
+            {
+                Mensaje = "Indique cuántos envases son (mayor a cero).";
+                return;
+            }
+            if (PesoPorEnvase <= 0)
+            {
+                Mensaje = "Indique el peso o volumen de cada envase (mayor a cero).";
+                return;
+            }
+            if (UnidadPeso is null)
+            {
+                Mensaje = "Seleccione la unidad del peso por envase.";
+                return;
+            }
+        }
+
         DetalleDonacion.Add(new DetalleDonacionInput
         {
             ProductoSeleccionado = ProductoParaAgregar,
             Cantidad = CantidadParaAgregar,
-            FechaVencimiento = fechaVencimiento
+            FechaVencimiento = fechaVencimiento,
+            EsEmpaquetado = EsEmpaquetado,
+            CantidadEnvases = EsEmpaquetado ? CantidadEnvases : null,
+            PesoPorEnvase = EsEmpaquetado ? PesoPorEnvase : null,
+            UnidadPeso = EsEmpaquetado ? UnidadPeso : null
         });
 
         // reset de la línea rápida de captura
         CantidadParaAgregar = 1;
+        EsEmpaquetado = false;
     }
 
     private async Task GuardarDonacionAsync()

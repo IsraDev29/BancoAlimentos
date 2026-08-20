@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="BancoAlimentos.Avalonia.Controls.LogoBanco"
+             Width="46" Height="46">
+
+    <!-- Logo dibujado con vectores: una canasta con un corazón encima.
+         No depende de archivos de imagen ni de fuentes con emoji. -->
+    <Viewbox Stretch="Uniform">
+        <Canvas Width="64" Height="64">
+
+            <Ellipse Canvas.Left="0" Canvas.Top="0" Width="64" Height="64"
+                     Fill="{DynamicResource BrandLight}"/>
+
+            <!-- Corazón: la donación. Va arriba y bien separado de la canasta. -->
+            <Path Fill="{DynamicResource StateDanger}"
+                  Canvas.Left="21" Canvas.Top="11"
+                  Data="M11,21 C11,21 0,14 0,7 C0,3.1 3.1,0 7,0 C9,0 10.3,0.9 11,2
+                        C11.7,0.9 13,0 15,0 C18.9,0 22,3.1 22,7 C22,14 11,21 11,21 Z"/>
+
+            <!-- Borde superior de la canasta -->
+            <Rectangle Canvas.Left="12" Canvas.Top="34" Width="40" Height="6"
+                       RadiusX="3" RadiusY="3" Fill="{DynamicResource BrandPrimary}"/>
+
+            <!-- Cuerpo de la canasta -->
+            <Path Fill="{DynamicResource BrandPrimary}"
+                  Canvas.Left="15" Canvas.Top="41"
+                  Data="M0,0 L34,0 L29.5,11.5 C28.9,13 27.5,14 25.9,14 L8.1,14
+                        C6.5,14 5.1,13 4.5,11.5 Z"/>
+
+            <!-- Trama de la canasta -->
+            <Line Canvas.Left="15" Canvas.Top="41" StartPoint="9,0" EndPoint="11,14"
+                  Stroke="{DynamicResource BrandLight}" StrokeThickness="1.6"/>
+            <Line Canvas.Left="15" Canvas.Top="41" StartPoint="17,0" EndPoint="17,14"
+                  Stroke="{DynamicResource BrandLight}" StrokeThickness="1.6"/>
+            <Line Canvas.Left="15" Canvas.Top="41" StartPoint="25,0" EndPoint="23,14"
+                  Stroke="{DynamicResource BrandLight}" StrokeThickness="1.6"/>
+        </Canvas>
+    </Viewbox>
+</UserControl>

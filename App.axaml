@@ -12,29 +12,43 @@
     <Application.Resources>
         <ResourceDictionary>
 
-            <!-- Identidad institucional -->
-            <SolidColorBrush x:Key="BrandPrimary"       Color="#1E3A5F"/>
-            <SolidColorBrush x:Key="BrandPrimaryDark"   Color="#14293F"/>
-            <SolidColorBrush x:Key="BrandAccent"        Color="#2563EB"/>
-            <SolidColorBrush x:Key="BrandAccentHover"   Color="#1D4ED8"/>
-            <SolidColorBrush x:Key="BrandAccentPressed" Color="#1E40AF"/>
-            <SolidColorBrush x:Key="BrandLight"         Color="#E8EEF7"/>
+            <!-- Paleta institucional (60-30-10)
+                 Crema  #f1ddbe  60%  fondo principal
+                 Café    #724635  30%  navegación, títulos, texto, acción primaria
+                 Rojo    #9e2c23   5%  alerta, stock bajo, acciones críticas
+                 Naranja #ee7b21   3%  advertencia, fechas límite
+                 Verde   #7e9446   2%  éxito, disponible                       -->
 
-            <!-- Superficies y texto -->
-            <SolidColorBrush x:Key="AppCanvas"          Color="#F1F5F9"/>
-            <SolidColorBrush x:Key="AppSurface"         Color="#FFFFFF"/>
-            <SolidColorBrush x:Key="AppBorder"          Color="#E2E8F0"/>
-            <SolidColorBrush x:Key="TextPrimary"        Color="#0F172A"/>
-            <SolidColorBrush x:Key="TextMuted"          Color="#64748B"/>
-            <SolidColorBrush x:Key="TextOnBrand"        Color="#CBD9EC"/>
+            <!-- Café: identidad y acción primaria (30%) -->
+            <SolidColorBrush x:Key="BrandPrimary"       Color="#724635"/>
+            <SolidColorBrush x:Key="BrandPrimaryDark"   Color="#5A3729"/>
+            <SolidColorBrush x:Key="BrandAccent"        Color="#724635"/>
+            <SolidColorBrush x:Key="BrandAccentHover"   Color="#5A3729"/>
+            <SolidColorBrush x:Key="BrandAccentPressed" Color="#47291E"/>
+            <SolidColorBrush x:Key="BrandLight"         Color="#F1DDBE"/>
+
+            <!-- Superficies y texto: crema (60%) -->
+            <SolidColorBrush x:Key="AppCanvas"          Color="#F1DDBE"/>
+            <SolidColorBrush x:Key="AppCanvasSoft"      Color="#F8EEDD"/>
+            <SolidColorBrush x:Key="AppSurface"         Color="#FFFCF6"/>
+            <SolidColorBrush x:Key="AppBorder"          Color="#E2CCA9"/>
+            <SolidColorBrush x:Key="AppBorderSoft"      Color="#EFE0C8"/>
+            <SolidColorBrush x:Key="TextPrimary"        Color="#3E241A"/>
+            <SolidColorBrush x:Key="TextBody"           Color="#5A4235"/>
+            <SolidColorBrush x:Key="TextMuted"          Color="#93796A"/>
+            <SolidColorBrush x:Key="TextOnBrand"        Color="#EADCC6"/>
+
+            <!-- Acentos (10%) -->
+            <SolidColorBrush x:Key="AccentNaranja"      Color="#EE7B21"/>
+            <SolidColorBrush x:Key="AccentNaranjaSoft"  Color="#FCE6CE"/>
 
             <!-- Estados de vencimiento -->
-            <SolidColorBrush x:Key="StateSuccess"       Color="#047857"/>
-            <SolidColorBrush x:Key="StateSuccessSoft"   Color="#D1FAE5"/>
-            <SolidColorBrush x:Key="StateWarning"       Color="#B45309"/>
-            <SolidColorBrush x:Key="StateWarningSoft"   Color="#FEF3C7"/>
-            <SolidColorBrush x:Key="StateDanger"        Color="#B91C1C"/>
-            <SolidColorBrush x:Key="StateDangerSoft"    Color="#FEE2E2"/>
+            <SolidColorBrush x:Key="StateSuccess"       Color="#5F7233"/>
+            <SolidColorBrush x:Key="StateSuccessSoft"   Color="#E7EDD6"/>
+            <SolidColorBrush x:Key="StateWarning"       Color="#C25E0B"/>
+            <SolidColorBrush x:Key="StateWarningSoft"   Color="#FCE6CE"/>
+            <SolidColorBrush x:Key="StateDanger"        Color="#9E2C23"/>
+            <SolidColorBrush x:Key="StateDangerSoft"    Color="#F6DEDA"/>
 
         </ResourceDictionary>
     </Application.Resources>

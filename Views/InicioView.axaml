@@ -1,0 +1,134 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:BancoAlimentos.Avalonia.ViewModels"
+             xmlns:models="using:BancoAlimentos.Avalonia.Models"
+             xmlns:ctrl="using:BancoAlimentos.Avalonia.Controls"
+             x:Class="BancoAlimentos.Avalonia.Views.InicioView"
+             x:DataType="vm:MainViewModel">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="24" Spacing="16">
+
+            <!-- Bienvenida -->
+            <Border Classes="tarjeta" Padding="26,22">
+                <Grid ColumnDefinitions="Auto,*">
+                    <ctrl:LogoBanco Grid.Column="0" Width="72" Height="72"
+                                    Margin="0,0,22,0" VerticalAlignment="Top"/>
+                    <StackPanel Grid.Column="1" Spacing="8">
+                        <TextBlock FontSize="23" FontWeight="Bold"
+                                   Foreground="{DynamicResource BrandPrimary}"
+                                   Text="{Binding PrimerNombre, StringFormat='Bienvenido, {0}'}"/>
+                        <TextBlock FontSize="13.5" TextWrapping="Wrap" MaxWidth="720"
+                                   Foreground="{DynamicResource TextBody}"
+                                   Text="Este sistema gestiona el ciclo completo de los alimentos que pasan por el banco: registra las donaciones que entran con su fecha de vencimiento, controla el inventario lote por lote, avisa de lo que está por vencer y deja constancia de cada entrega a comedores comunitarios y ONG."/>
+                        <TextBlock Classes="apagado" TextWrapping="Wrap" MaxWidth="720"
+                                   Margin="0,4,0,0"
+                                   Text="Usá la barra lateral para moverte entre módulos. Atajos: F5 recarga el módulo actual, Esc descarta los mensajes y Ctrl+1 a Ctrl+8 saltan directo a cada módulo."/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Indicadores -->
+            <Grid ColumnDefinitions="*,16,*,16,*,16,*">
+
+                <Border Grid.Column="0" Classes="tarjeta" Padding="18,15">
+                    <StackPanel>
+                        <TextBlock Classes="metricaEtiqueta" Text="LOTES EN INVENTARIO"/>
+                        <TextBlock Classes="metrica" Margin="0,4,0,0"
+                                   Text="{Binding InventarioVm.TotalLotes}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Classes="tarjeta" Padding="18,15">
+                    <StackPanel>
+                        <TextBlock Classes="metricaEtiqueta" Text="POR VENCER"
+                                   Foreground="{DynamicResource StateWarning}"/>
+                        <TextBlock Classes="metrica" Margin="0,4,0,0"
+                                   Foreground="{DynamicResource StateWarning}"
+                                   Text="{Binding AlertasVm.TotalPorVencer}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="4" Classes="tarjeta" Padding="18,15">
+                    <StackPanel>
+                        <TextBlock Classes="metricaEtiqueta" Text="VENCIDOS"
+                                   Foreground="{DynamicResource StateDanger}"/>
+                        <TextBlock Classes="metrica" Margin="0,4,0,0"
+                                   Foreground="{DynamicResource StateDanger}"
+                                   Text="{Binding AlertasVm.TotalVencidos}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="6" Classes="tarjeta" Padding="18,15">
+                    <StackPanel>
+                        <TextBlock Classes="metricaEtiqueta" Text="DONANTES ACTIVOS"
+                                   Foreground="{DynamicResource StateSuccess}"/>
+                        <TextBlock Classes="metrica" Margin="0,4,0,0"
+                                   Foreground="{DynamicResource StateSuccess}"
+                                   Text="{Binding DonantesVm.TotalDonantes}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Alertas de vencimiento -->
+            <Border Classes="tarjeta" Padding="0">
+                <Grid RowDefinitions="Auto,Auto">
+                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="18,15,18,12">
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock Classes="subtitulo" Text="Alertas de vencimiento"/>
+                            <TextBlock Classes="apagado"
+                                       Text="Lotes vencidos o próximos a vencer que requieren atención."/>
+                        </StackPanel>
+                        <Button Grid.Column="1" Classes="secundario" Content="Ver inventario"
+                                Command="{Binding SeleccionarSeccionCommand}" CommandParameter="4"
+                                VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding AlertasVm.Alertas}"
+                              AutoGenerateColumns="False" IsReadOnly="True"
+                              BorderThickness="0" MaxHeight="260">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="PRODUCTO" Binding="{Binding Producto}" Width="1.6*"/>
+                            <DataGridTextColumn Header="CANTIDAD" Binding="{Binding CantidadDisponible}" Width="125"/>
+                            <DataGridTextColumn Header="UNIDAD" Binding="{Binding Unidad}" Width="105"/>
+                            <DataGridTextColumn Header="VENCE" Binding="{Binding FechaVencimiento, StringFormat=dd/MM/yyyy}" Width="110"/>
+                            <DataGridTextColumn Header="DONANTE" Binding="{Binding Donante}" Width="1.4*"/>
+                            <DataGridTemplateColumn Header="ESTADO" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="models:InventarioItem">
+                                        <Border Classes="distintivo"
+                                                Classes.aviso="{Binding EstadoEsPorVencer}"
+                                                Classes.peligro="{Binding EstadoEsVencido}">
+                                            <TextBlock Text="{Binding Estado}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <TextBlock Classes="mensaje" Text="{Binding AlertasVm.Mensaje}"
+                       IsVisible="{Binding AlertasVm.Mensaje, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+            <!-- Accesos rápidos -->
+            <Border Classes="tarjeta">
+                <StackPanel Spacing="12">
+                    <TextBlock Classes="subtitulo" Text="Accesos rápidos"/>
+                    <Grid ColumnDefinitions="*,12,*,12,*">
+                        <Button Grid.Column="0" Classes="primario" Content="Registrar donación"
+                                Command="{Binding SeleccionarSeccionCommand}" CommandParameter="1"
+                                HorizontalAlignment="Stretch" Height="40"/>
+                        <Button Grid.Column="2" Classes="secundario" Content="Registrar entrega"
+                                Command="{Binding SeleccionarSeccionCommand}" CommandParameter="6"
+                                HorizontalAlignment="Stretch" Height="40"/>
+                        <Button Grid.Column="4" Classes="secundario" Content="Ver reportes"
+                                Command="{Binding SeleccionarSeccionCommand}" CommandParameter="5"
+                                HorizontalAlignment="Stretch" Height="40"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

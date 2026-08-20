@@ -23,4 +23,17 @@ public class InventarioItem
     public bool EstadoEsVigente => Estado == "Vigente";
     public bool EstadoEsPorVencer => Estado == "Por vencer";
     public bool EstadoEsVencido => Estado == "Vencido";
+
+    // ---------- Empaquetado del lote ----------
+
+    public bool EsEmpaquetado { get; set; }
+    public decimal? CantidadEnvases { get; set; }
+    public decimal? PesoPorEnvase { get; set; }
+    public string? UnidadPeso { get; set; }
+
+    /// <summary>Columna «EMPAQUE» de las tablas: "10 × 2.5 Kg" o "Granel".</summary>
+    public string DescripcionEmpaque =>
+        EsEmpaquetado && CantidadEnvases is > 0 && PesoPorEnvase is > 0
+            ? $"{CantidadEnvases:0.##} × {PesoPorEnvase:0.###} {UnidadPeso}"
+            : "Granel";
 }

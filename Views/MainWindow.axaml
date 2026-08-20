@@ -2,76 +2,103 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:BancoAlimentos.Avalonia.ViewModels"
         xmlns:views="using:BancoAlimentos.Avalonia.Views"
+        xmlns:ctrl="using:BancoAlimentos.Avalonia.Controls"
         x:Class="BancoAlimentos.Avalonia.Views.MainWindow"
         x:DataType="vm:MainViewModel"
-        Width="1280" Height="800"
-        MinWidth="900" MinHeight="560"
+        Width="1320" Height="820"
+        MinWidth="940" MinHeight="580"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource AppCanvas}"
         Title="Banco de Alimentos Solidarios - Sistema de Donaciones">
 
-    <Grid ColumnDefinitions="248,*">
+    <Grid ColumnDefinitions="252,*">
 
-        <!-- Barra lateral de navegación -->
-        <Border Grid.Column="0" Background="{DynamicResource BrandPrimary}">
-            <Grid RowDefinitions="Auto,*,Auto" Margin="16,20,16,16">
+        <!-- Barra lateral -->
+        <Border Grid.Column="0" Background="{DynamicResource AppSurface}"
+                BorderBrush="{DynamicResource AppBorder}" BorderThickness="0,0,1,0">
+            <Grid RowDefinitions="Auto,*,Auto" Margin="14,18,14,14">
 
-                <StackPanel Grid.Row="0" Margin="6,0,6,26">
-                    <TextBlock Text="Banco de Alimentos" Foreground="White"
-                               FontSize="16" FontWeight="Bold"/>
-                    <TextBlock Text="Solidarios" Foreground="{DynamicResource TextOnBrand}"
-                               FontSize="16" FontWeight="Bold"/>
-                    <TextBlock Text="Gestión de donaciones" Foreground="{DynamicResource TextOnBrand}"
-                               FontSize="11.5" Margin="0,8,0,0"/>
-                </StackPanel>
+                <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="6,0,6,22">
+                    <ctrl:LogoBanco Grid.Column="0" Width="40" Height="40" Margin="0,0,10,0"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Banco de" FontSize="13" FontWeight="Bold"
+                                   Foreground="{DynamicResource BrandPrimary}"/>
+                        <TextBlock Text="Alimentos App" FontSize="13" FontWeight="Bold"
+                                   Foreground="{DynamicResource BrandPrimary}"/>
+                    </StackPanel>
+                </Grid>
 
-                <StackPanel Grid.Row="1" Spacing="4">
-                    <Button Classes="nav" Classes.activo="{Binding EsDonaciones}"
-                            Command="{Binding SeleccionarSeccionCommand}" CommandParameter="0"
-                            Content="Donaciones"/>
-                    <Button Classes="nav" Classes.activo="{Binding EsInventario}"
-                            Command="{Binding SeleccionarSeccionCommand}" CommandParameter="1"
-                            Content="Inventario"/>
-                    <Button Classes="nav" Classes.activo="{Binding EsDistribucion}"
-                            Command="{Binding SeleccionarSeccionCommand}" CommandParameter="2"
-                            Content="Distribución"/>
-                    <Button Classes="nav" Classes.activo="{Binding EsAlertas}"
-                            Command="{Binding SeleccionarSeccionCommand}" CommandParameter="3">
-                        <Grid ColumnDefinitions="*,Auto" MinWidth="180">
-                            <TextBlock Grid.Column="0" Text="Alertas" VerticalAlignment="Center"/>
-                            <Border Grid.Column="1" Background="{DynamicResource StateDanger}"
-                                    CornerRadius="9" MinWidth="20" Height="18" Padding="6,0"
-                                    VerticalAlignment="Center"
-                                    IsVisible="{Binding AlertasVm.TieneAlertas}">
-                                <TextBlock Text="{Binding AlertasVm.TotalAlertas}" Foreground="White"
-                                           FontSize="10.5" FontWeight="Bold"
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Spacing="3">
+                        <Button Classes="nav" Classes.activo="{Binding EsInicio}"
+                                Command="{Binding SeleccionarSeccionCommand}" CommandParameter="0"
+                                Content="Inicio"/>
+                        <Button Classes="nav" Classes.activo="{Binding EsDonaciones}"
+                                Command="{Binding SeleccionarSeccionCommand}" CommandParameter="1"
+                                Content="Donaciones"/>
+                        <Button Classes="nav" Classes.activo="{Binding EsBeneficiarios}"
+                                Command="{Binding SeleccionarSeccionCommand}" CommandParameter="2"
+                                Content="Beneficiarios"/>
+                        <Button Classes="nav" Classes.activo="{Binding EsDonantes}"
+                                Command="{Binding SeleccionarSeccionCommand}" CommandParameter="3"
+                                Content="Donantes"/>
+                        <Button Classes="nav" Classes.activo="{Binding EsInventario}"
+                                Command="{Binding SeleccionarSeccionCommand}" CommandParameter="4">
+                            <Grid ColumnDefinitions="*,Auto" MinWidth="186">
+                                <TextBlock Grid.Column="0" Text="Inventario" VerticalAlignment="Center"/>
+                                <Border Grid.Column="1" Background="{DynamicResource StateDanger}"
+                                        CornerRadius="9" MinWidth="20" Height="18" Padding="6,0"
+                                        VerticalAlignment="Center"
+                                        IsVisible="{Binding AlertasVm.TieneAlertas}"
+                                        ToolTip.Tip="Lotes vencidos o por vencer">
+                                    <TextBlock Text="{Binding AlertasVm.TotalAlertas}" Foreground="White"
+                                               FontSize="10.5" FontWeight="Bold"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                        </Button>
+                        <Button Classes="nav" Classes.activo="{Binding EsReportes}"
+                                Command="{Binding SeleccionarSeccionCommand}" CommandParameter="5"
+                                Content="Reportes"/>
+                        <Button Classes="nav" Classes.activo="{Binding EsDistribucion}"
+                                Command="{Binding SeleccionarSeccionCommand}" CommandParameter="6"
+                                Content="Distribución"/>
+                        <Button Classes="nav" Classes.activo="{Binding EsConfiguracion}"
+                                Command="{Binding SeleccionarSeccionCommand}" CommandParameter="7"
+                                Content="Configuración"/>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <StackPanel Grid.Row="2" Spacing="8">
+                    <Border Background="{DynamicResource AppCanvasSoft}"
+                            BorderBrush="{DynamicResource AppBorderSoft}" BorderThickness="1"
+                            CornerRadius="10" Padding="12,10">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Border Grid.Column="0" Width="34" Height="34" CornerRadius="17"
+                                    Margin="0,0,10,0" Background="{DynamicResource BrandPrimary}">
+                                <TextBlock Text="{Binding InicialesUsuario}" Foreground="White"
+                                           FontSize="12.5" FontWeight="Bold"
                                            HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding NombreUsuario}" FontSize="12"
+                                           FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                           Foreground="{DynamicResource TextPrimary}"/>
+                                <TextBlock Text="{Binding RolUsuario}" FontSize="10.5"
+                                           Foreground="{DynamicResource TextMuted}"/>
+                            </StackPanel>
                         </Grid>
-                    </Button>
-                </StackPanel>
+                    </Border>
 
-                <Border Grid.Row="2" Background="#1A2F4C" CornerRadius="10" Padding="12,10">
-                    <Grid ColumnDefinitions="Auto,*">
-                        <Border Grid.Column="0" Width="34" Height="34" CornerRadius="17"
-                                Margin="0,0,10,0" Background="{DynamicResource BrandAccent}">
-                            <TextBlock Text="{Binding InicialesUsuario}" Foreground="White"
-                                       FontSize="12.5" FontWeight="Bold"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding NombreUsuario}" Foreground="White"
-                                       FontSize="12" FontWeight="SemiBold"
-                                       TextTrimming="CharacterEllipsis"/>
-                            <TextBlock Text="{Binding RolUsuario}" FontSize="10.5"
-                                       Foreground="{DynamicResource TextOnBrand}"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
+                    <Button Classes="peligro" Content="Cerrar sesión"
+                            Command="{Binding CerrarSesionCommand}"
+                            HorizontalAlignment="Stretch"/>
+                </StackPanel>
             </Grid>
         </Border>
 
-        <!-- Área de contenido -->
+        <!-- Contenido -->
         <Grid Grid.Column="1" RowDefinitions="Auto,*">
 
             <Border Grid.Row="0" Background="{DynamicResource AppSurface}"
@@ -84,17 +111,29 @@
             </Border>
 
             <Panel Grid.Row="1">
+                <ContentControl IsVisible="{Binding EsInicio}">
+                    <views:InicioView/>
+                </ContentControl>
                 <ContentControl IsVisible="{Binding EsDonaciones}">
                     <views:DonacionesView DataContext="{Binding DonacionesVm}"/>
+                </ContentControl>
+                <ContentControl IsVisible="{Binding EsBeneficiarios}">
+                    <views:BeneficiariosView DataContext="{Binding BeneficiariosVm}"/>
+                </ContentControl>
+                <ContentControl IsVisible="{Binding EsDonantes}">
+                    <views:DonantesView DataContext="{Binding DonantesVm}"/>
                 </ContentControl>
                 <ContentControl IsVisible="{Binding EsInventario}">
                     <views:InventarioView DataContext="{Binding InventarioVm}"/>
                 </ContentControl>
+                <ContentControl IsVisible="{Binding EsReportes}">
+                    <views:ReportesView/>
+                </ContentControl>
                 <ContentControl IsVisible="{Binding EsDistribucion}">
                     <views:DistribucionView DataContext="{Binding DistribucionVm}"/>
                 </ContentControl>
-                <ContentControl IsVisible="{Binding EsAlertas}">
-                    <views:AlertasView DataContext="{Binding AlertasVm}"/>
+                <ContentControl IsVisible="{Binding EsConfiguracion}">
+                    <views:ConfiguracionView/>
                 </ContentControl>
             </Panel>
         </Grid>

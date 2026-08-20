@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:BancoAlimentos.Avalonia.ViewModels"
+             x:Class="BancoAlimentos.Avalonia.Views.ReportesView"
+             x:DataType="vm:MainViewModel">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="24" Spacing="16">
+
+            <Border Classes="tarjeta">
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="subtitulo" Text="Reporte de donaciones (RF-04)"/>
+                    <TextBlock Classes="apagado" TextWrapping="Wrap" MaxWidth="760"
+                               Text="Detalle de qué donó cada donante, en qué fecha, en qué cantidad y con qué vencimiento. Es el respaldo que se entrega a los donantes."/>
+                    <TextBlock Classes="apagado" Margin="0,4,0,0"
+                               Text="Origen de datos: vista dbo.vw_ReporteDonaciones"/>
+                    <Button Classes="primario" Content="Generar reporte" IsEnabled="False"
+                            HorizontalAlignment="Left" Margin="0,8,0,0"
+                            ToolTip.Tip="Disponible en la siguiente entrega"/>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="tarjeta">
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="subtitulo" Text="Reporte de distribución (RF-05)"/>
+                    <TextBlock Classes="apagado" TextWrapping="Wrap" MaxWidth="760"
+                               Text="Detalle de qué se entregó a cada beneficiario, cuándo y bajo la responsabilidad de qué usuario. Es el respaldo para entes fiscalizadores."/>
+                    <TextBlock Classes="apagado" Margin="0,4,0,0"
+                               Text="Origen de datos: vista dbo.vw_ReporteDistribucion"/>
+                    <Button Classes="primario" Content="Generar reporte" IsEnabled="False"
+                            HorizontalAlignment="Left" Margin="0,8,0,0"
+                            ToolTip.Tip="Disponible en la siguiente entrega"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{DynamicResource AccentNaranjaSoft}" CornerRadius="10"
+                    BorderBrush="{DynamicResource AccentNaranja}" BorderThickness="1"
+                    Padding="18,14">
+                <StackPanel Spacing="4">
+                    <TextBlock Classes="seccion" Text="PENDIENTE"
+                               Foreground="{DynamicResource StateWarning}"/>
+                    <TextBlock TextWrapping="Wrap" FontSize="12.5"
+                               Foreground="{DynamicResource TextBody}"
+                               Text="Las dos vistas SQL ya existen y devuelven datos. Falta la pantalla que las muestre y la exportación a PDF o Excel; queda para la fase 2 junto con el CRUD."/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

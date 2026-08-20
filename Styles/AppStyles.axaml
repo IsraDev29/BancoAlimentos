@@ -109,6 +109,21 @@
         <Setter Property="MinHeight" Value="36"/>
     </Style>
 
+    <!-- El recuadro marcado viene azul del tema Fluent -->
+    <Style Selector="CheckBox">
+        <Setter Property="Foreground" Value="{DynamicResource TextBody}"/>
+    </Style>
+    <Style Selector="CheckBox:checked /template/ Border#NormalRectangle">
+        <Setter Property="Background" Value="{DynamicResource BrandPrimary}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BrandPrimary}"/>
+    </Style>
+    <Style Selector="CheckBox:checked /template/ Path#CheckGlyph">
+        <Setter Property="Fill" Value="White"/>
+    </Style>
+    <Style Selector="CheckBox:unchecked /template/ Border#NormalRectangle">
+        <Setter Property="BorderBrush" Value="{DynamicResource AppBorder}"/>
+    </Style>
+
     <!-- DataGrid -->
 
     <Style Selector="DataGrid">
@@ -190,7 +205,7 @@
 
     <Style Selector="Button.nav">
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="{DynamicResource TextOnBrand}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextBody}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="14,0"/>
@@ -201,18 +216,18 @@
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
     </Style>
     <Style Selector="Button.nav:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#1F3A5C"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="{DynamicResource AppCanvasSoft}"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrandPrimary}"/>
     </Style>
     <Style Selector="Button.nav.activo">
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrandPrimary}"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
     <Style Selector="Button.nav.activo /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource BrandAccent}"/>
+        <Setter Property="Background" Value="{DynamicResource BrandLight}"/>
     </Style>
     <Style Selector="Button.nav.activo:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource BrandAccentHover}"/>
+        <Setter Property="Background" Value="{DynamicResource BrandLight}"/>
     </Style>
 
     <!-- Cabecera de página -->
@@ -256,6 +271,98 @@
         <Setter Property="FontSize" Value="12.5"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="Foreground" Value="{DynamicResource StateDanger}"/>
+    </Style>
+
+    <!-- Acción destructiva / cerrar sesión -->
+
+    <Style Selector="Button.peligro">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource StateDanger}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource AppBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    <Style Selector="Button.peligro:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource StateDangerSoft}"/>
+        <Setter Property="Foreground" Value="{DynamicResource StateDanger}"/>
+    </Style>
+
+    <!-- Foco visible: necesario para que navegar con Tab se entienda -->
+
+    <Style Selector=":is(Button):focus-visible /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentNaranja}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+    </Style>
+
+    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+        <Setter Property="BorderBrush" Value="{DynamicResource BrandPrimary}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+    </Style>
+
+    <!-- Pestañas del login (Iniciar sesión / Crear cuenta) -->
+
+    <Style Selector="TabControl.segmentado">
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+
+    <Style Selector="TabControl.segmentado TabItem">
+        <Setter Property="FontSize" Value="13.5"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="18,9"/>
+        <Setter Property="MinHeight" Value="40"/>
+        <Setter Property="Margin" Value="0,0,6,0"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+    </Style>
+
+    <Style Selector="TabControl.segmentado TabItem:selected">
+        <Setter Property="Foreground" Value="{DynamicResource BrandPrimary}"/>
+    </Style>
+
+    <Style Selector="TabControl.segmentado TabItem:pointerover">
+        <Setter Property="Foreground" Value="{DynamicResource BrandPrimary}"/>
+    </Style>
+
+    <!-- El indicador de la pestaña activa viene azul del tema Fluent -->
+    <Style Selector="TabControl.segmentado TabItem:selected /template/ Border#PART_SelectedPipe">
+        <Setter Property="Background" Value="{DynamicResource BrandPrimary}"/>
+    </Style>
+
+    <!-- Encabezado de sección dentro de una tarjeta -->
+
+    <Style Selector="TextBlock.seccion">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+    </Style>
+
+    <!-- Selector de sub-vista dentro de un módulo. No reutiliza Button.nav porque
+         su resalte crema se pierde sobre el lienzo, que es del mismo color. -->
+
+    <Style Selector="Button.segmento">
+        <Setter Property="Background" Value="{DynamicResource AppSurface}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource AppBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="18,0"/>
+        <Setter Property="MinHeight" Value="38"/>
+        <Setter Property="FontSize" Value="13"/>
+    </Style>
+    <Style Selector="Button.segmento:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource BrandLight}"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrandPrimary}"/>
+    </Style>
+    <Style Selector="Button.segmento.activo">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+    <Style Selector="Button.segmento.activo /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource BrandPrimary}"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Button.segmento.activo:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource BrandPrimaryDark}"/>
+        <Setter Property="Foreground" Value="White"/>
     </Style>
 
 </Styles>

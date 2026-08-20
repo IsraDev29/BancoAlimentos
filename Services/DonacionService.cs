@@ -29,11 +29,21 @@ public class DonacionService
             if (d.Cantidad <= 0)
                 throw new ArgumentException("La cantidad debe ser mayor a cero.");
 
+            if (d.EsEmpaquetado &&
+                (d.CantidadEnvases is not > 0 || d.PesoPorEnvase is not > 0 || d.UnidadPeso is null))
+                throw new ArgumentException(
+                    $"'{d.ProductoNombre}' está marcado como empaquetado: indique cantidad de envases, " +
+                    "peso por envase y su unidad.");
+
             detalleJsonList.Add(new
             {
                 IdProducto = d.ProductoSeleccionado.IdProducto,
                 Cantidad = d.Cantidad,
-                FechaVencimiento = d.FechaVencimiento.ToString("yyyy-MM-dd")
+                FechaVencimiento = d.FechaVencimiento.ToString("yyyy-MM-dd"),
+                EsEmpaquetado = d.EsEmpaquetado,
+                CantidadEnvases = d.EsEmpaquetado ? d.CantidadEnvases : null,
+                PesoPorEnvase = d.EsEmpaquetado ? d.PesoPorEnvase : null,
+                IdUnidadPeso = d.EsEmpaquetado ? d.UnidadPeso?.IdUnidad : null
             });
         }
 

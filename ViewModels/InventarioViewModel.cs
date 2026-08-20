@@ -46,12 +46,37 @@ public class InventarioViewModel : ViewModelBase
         set => SetField(ref _mensaje, value);
     }
 
+    /// <summary>Total de lotes sin filtrar; se muestra en el panel de Inicio.</summary>
+    public int TotalLotes => _todosLosItems.Count;
+
+    /// <summary>CRUD del catálogo de alimentos, en la segunda pestaña del módulo.</summary>
+    public ProductosViewModel ProductosVm { get; } = new();
+
+    private bool _mostrandoAlimentos;
+    public bool MostrandoAlimentos
+    {
+        get => _mostrandoAlimentos;
+        set
+        {
+            if (SetField(ref _mostrandoAlimentos, value))
+                OnPropertyChanged(nameof(MostrandoExistencias));
+        }
+    }
+
+    public bool MostrandoExistencias => !MostrandoAlimentos;
+
+    public ICommand VerExistenciasCommand { get; }
+    public ICommand VerAlimentosCommand { get; }
+
     public ICommand CargarCommand { get; }
 
     public InventarioViewModel()
     {
         CargarCommand = new AsyncRelayCommand(_ => CargarAsync(),
             onError: ex => Mensaje = "Error cargando el inventario: " + ex.Message);
+
+        VerExistenciasCommand = new RelayCommand(_ => MostrandoAlimentos = false);
+        VerAlimentosCommand = new RelayCommand(_ => MostrandoAlimentos = true);
 
         // La carga inicial pasa por el comando para que los errores de conexión se
         // muestren en pantalla en lugar de perderse en una tarea sin observar.
@@ -63,6 +88,7 @@ public class InventarioViewModel : ViewModelBase
         Mensaje = string.Empty;
         var datos = await _inventarioService.ObtenerInventarioAsync();
         _todosLosItems = new ObservableCollection<InventarioItem>(datos);
+        OnPropertyChanged(nameof(TotalLotes));
         AplicarFiltro();
 
         if (_todosLosItems.Count == 0)
